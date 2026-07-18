@@ -95,15 +95,21 @@ app.get('/dashboard.html', requireAuth, async (req, res) => {
     }
 });
 
-// Dynamic Budget List View Allocation Route Handler
-app.get('/budget.html', requireAuth, async (req, res) => {
+// Example data retrieval route for Budgets
+app.get('/api/budgets', async (req, res) => {
     try {
+        if (!req.session.userId) {
+            return res.status(401).json({ success: false, message: "Unauthorized access." });
+        }
         const user = await User.findById(req.session.userId);
-        if (!user) return res.redirect('/auth.html');
-        res.render(path.join(__dirname, 'budget.html'), { user }); 
-    } catch (err) {
-        console.error("Budget workspace view rendering fault:", err);
-        res.redirect('/dashboard.html');
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found." });
+        }
+        // Send back the budgets array seamlessly
+        res.json({ success: true, budgets: user.budgets || [] });
+    } catch (error) {
+        console.error("Fetch budgets system failure:", error);
+        res.status(500).json({ success: false, message: "Internal server data retrieval failure." });
     }
 });
 
