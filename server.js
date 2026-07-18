@@ -52,13 +52,16 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 // Tells Express to trust the Vercel HTTPS reverse proxy layers, allowing cookies to securely register.
 app.set('trust proxy', 1);
 
+// 🔥 CRITICAL FIX FOR VERCEL SERVERLESS DEPLOYMENTS:
+app.set('trust proxy', 1);
+
 app.use(session({
     secret: process.env.SESSION_SECRET || 'aureum_secure_vault_key',
     resave: false,
     saveUninitialized: false,
-    store: new MongoStore({
-        mongoUrl: cloudMongoURI, 
-        ttl: 24 * 60 * 60,       // Sessions expire after 1 day
+    store: MongoStore.create({
+        client: mongoose.connection.getClient(), // 🔥 EXACT V5 SYNTAX: Re-uses your active mongoose database client directly
+        ttl: 24 * 60 * 60,                        // Sessions expire after 1 day
         autoRemove: 'native'
     }),
     cookie: { 
