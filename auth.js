@@ -27,16 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Submission Handler matching backend JSON responses
-    const handleFormSubmit = (formId, endpointPath) => {
-        const formElement = document.getElementById(formId);
-        if (!formElement) return;
-
-        formElement.addEventListener('submit', async (e) => {
-            e.preventDefault(); // 🔥 CRITICAL VERCEL PATCH: Exclusively intercepts and kills standard HTML URL parameter leak!
+    // 🔥 FORTIFIED GLOBAL DELEGATION EVENT LISTENER: Catches submission perfectly on all views
+    document.addEventListener('submit', async (e) => {
+        const targetForm = e.target;
+        
+        // Match the submit routes explicitly
+        if (targetForm.id === 'login-form' || targetForm.id === 'signup-form') {
+            e.preventDefault(); // Stop URL injection bar parameters instantly
             
-            // Extracts all inputs (name, email, password) dynamically using form key-value fields
-            const formData = new FormData(formElement);
+            const endpointPath = targetForm.id === 'login-form' ? '/auth/login' : '/auth/signup';
+            
+            // Extract the secure dataset mapping arrays
+            const formData = new FormData(targetForm);
             const dataPayload = Object.fromEntries(formData.entries());
 
             try {
@@ -49,17 +51,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
 
                 if (result.success && result.redirectUrl) {
-                    window.location.href = result.redirectUrl; // Redirects smoothly to dashboard.html
+                    window.location.href = result.redirectUrl; // Redirect smoothly to dashboard.html
                 } else {
                     alert(result.message || "Credential configuration rejected.");
                 }
             } catch (err) {
+                console.error("Transmission Exception:", err);
                 alert("Authentication engine communication fault.");
             }
-        });
-    };
-
-    // Initialize listeners on form selectors matching HTML id attributes
-    handleFormSubmit('login-form', '/auth/login');
-    handleFormSubmit('signup-form', '/auth/signup');
+        }
+    });
 });
