@@ -33,7 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!formElement) return;
 
         formElement.addEventListener('submit', async (e) => {
-            e.preventDefault();
+            e.preventDefault(); // 🔥 CRITICAL VERCEL PATCH: Exclusively intercepts and kills standard HTML URL parameter leak!
+            
+            // Extracts all inputs (name, email, password) dynamically using form key-value fields
             const formData = new FormData(formElement);
             const dataPayload = Object.fromEntries(formData.entries());
 
@@ -47,16 +49,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
 
                 if (result.success && result.redirectUrl) {
-                    window.location.href = result.redirectUrl;
+                    window.location.href = result.redirectUrl; // Redirects smoothly to dashboard.html
                 } else {
                     alert(result.message || "Credential configuration rejected.");
                 }
             } catch (err) {
-                alert("Gateway communication blackout.");
+                alert("Authentication engine communication fault.");
             }
         });
     };
 
+    // Initialize listeners on form selectors matching HTML id attributes
     handleFormSubmit('login-form', '/auth/login');
     handleFormSubmit('signup-form', '/auth/signup');
 });
