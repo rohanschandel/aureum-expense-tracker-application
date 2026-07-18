@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "cleanUrls": true,
   "builds": [
     {
       "src": "server.js",
@@ -8,54 +7,6 @@
     }
   ],
   "routes": [
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/auth.js",
-      "dest": "/auth.js"
-    },
-    {
-      "src": "/auth.css",
-      "dest": "/auth.css"
-    },
-    {
-      "src": "/authhtmlimg.jpg",
-      "dest": "/authhtmlimg.jpg"
-    },
-    {
-      "src": "/auth.html",
-      "dest": "/auth.html"
-    },
-    {
-      "src": "/index.html",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/auth/(.*)",
-      "dest": "server.js"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "server.js"
-    },
-    {
-      "src": "/dashboard.html",
-      "dest": "server.js"
-    },
-    {
-      "src": "/budget.html",
-      "dest": "server.js"
-    },
-    {
-      "src": "/expense.html",
-      "dest": "server.js"
-    },
-    {
-      "src": "/profile.html",
-      "dest": "server.js"
-    },
     {
       "src": "/(.*)",
       "dest": "server.js"

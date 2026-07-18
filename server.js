@@ -351,10 +351,60 @@ app.post('/api/expenses/delete/:id', requireAuth, async (req, res) => {
         res.status(500).json({ success: false, message: "Server sub-document array mutation failure." });
     }
 });
+/* ================= FALLBACK ENGINE ROUTING ================= */
 
-// Fallback Route Handler
+// Base entry root path serves index.html natively
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'), (err) => {
+        if (err) {
+            // Fallback automatically to auth gateway if index isn't found
+            res.sendFile(path.join(__dirname, 'auth.html'), (err2) => {
+                if (err2) res.status(404).send("Ledger entry portal file missing.");
+            });
+        }
+    });
+});
+
+// Whitelisted page routing matrix using stable absolute path serving
+app.get('/:page', async (req, res, next) => {
+    const filename = req.params.page;
+    
+    try {
+        // 1. Guard-protected dashboard pages that REQUIRE an active session & DB lookup
+        if (filename === 'dashboard.html' || filename === 'budget.html' || filename === 'profile.html' || filename === 'expense.html') {
+            if (!req.session || !req.session.userId) {
+                return res.redirect('/auth.html');
+            }
+
+            const user = await User.findById(req.session.userId);
+            if (!user) return res.redirect('/auth.html');
+            
+            // Render user profile variables using EJS dynamically
+            return res.render(filename, { user }); 
+        }
+        
+        // 2. Public static views (like auth.html) served safely without path errors
+        if (filename.endsWith('.html')) {
+            return res.sendFile(path.join(__dirname, filename), (err) => {
+                if (err) next();
+            });
+        }
+        
+        next();
+    } catch (err) {
+        console.error("Fallback path resolution error:", err);
+        res.status(404).send("Requested asset view node not found.");
+    }
+});
+
+// Static middleware layer to serve companion files like auth.js and auth.css automatically
+app.use(express.static(path.join(__dirname)));
+
+// Catch-all route for unhandled requests
 app.get('*', (req, res) => {
-    res.status(404).send("Requested endpoint template context not found.");
+    res.sendFile(path.join(__dirname, 'auth.html'), (err) => {
+        if (err) res.status(404).send("Requested endpoint template context not found.");
+    });
 });
 
 const PORT = process.env.PORT || 3000;
