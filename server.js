@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
-const MongoStore = require('connect-mongo').default;
+const MongoStore = require('connect-mongo');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const ejs = require('ejs');
@@ -56,7 +56,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'aureum_secure_vault_key',
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
+    store: new MongoStore({
         mongoUrl: cloudMongoURI, 
         ttl: 24 * 60 * 60,       // Sessions expire after 1 day
         autoRemove: 'native'
