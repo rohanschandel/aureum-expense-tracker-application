@@ -56,7 +56,8 @@
                         <p class="text-sm text-on-surface-variant font-light">Welcome back to The Royal Ledger asset terminal.</p>
                     </div>
 
-                    <form onsubmit="handleAuthSubmit(event)" method="POST" action="/auth/login" class="space-y-4"></form>
+                    <!-- 🔥 FIXED: Form elements now correctly wrap the inner inputs without closing early! -->
+                    <form id="login-form" method="POST" action="/auth/login" class="space-y-4">
                         <div>
                             <label class="block text-xs uppercase tracking-[0.15em] font-semibold text-on-surface-variant mb-2">Email Address</label>
                             <input class="w-full bg-[#EBF2FE] border border-transparent rounded-lg px-4 py-3 text-sm font-medium outline-none placeholder:text-slate-400 focus:ring-1 focus:ring-aureum-gold focus:border-aureum-gold transition-all" name="email" placeholder="rohanschandel@gmail.com" type="email" required>
@@ -81,7 +82,7 @@
                         <p class="text-sm text-on-surface-variant font-light">Begin your journey toward institutional-grade wealth tracking.</p>
                     </div>
 
-                    <form onsubmit="handleSignupSubmit(event)" method="POST" action="/auth/signup" class="space-y-4">
+                    <form id="signup-form" method="POST" action="/auth/signup" class="space-y-4">
                         <div>
                             <label class="block text-xs uppercase tracking-[0.15em] font-semibold text-on-surface-variant mb-1.5">Account Title Name</label>
                             <input class="w-full bg-[#EBF2FE] border border-transparent rounded-lg px-4 py-2.5 text-sm font-medium outline-none placeholder:text-slate-400 focus:ring-1 focus:ring-aureum-gold focus:border-aureum-gold transition-all" name="name" placeholder="Alexander Sterling" type="text" required>
@@ -115,6 +116,7 @@
         </section>
     </main>
 
-    <script src="auth.js"></script>
+    <!-- Cache breaker bound query strings force browser container sync loops -->
+    <script src="auth.js?v=2.1"></script>
 </body>
 </html>
