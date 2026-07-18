@@ -8,18 +8,26 @@ const ejs = require('ejs');
 
 const app = express();
 
-// DATABASE CONNECTION (MongoDB Atlas Cloud Vault - Enforces production string override fallback structures)
+// DATABASE CONNECTION CONFIG (Serverless Optimization Lifecycle Matrix)
 const cloudMongoURI = process.env.MONGO_URI && !process.env.MONGO_URI.includes('127.0.0.1') 
     ? process.env.MONGO_URI 
     : 'mongodb+srv://rohan9922758495_db_user:0PfjjeLkaNU0EKwm@rohan000.ea5li24.mongodb.net/aureum?retryWrites=true&w=majority&appName=Rohan000';
 
-mongoose.connect(cloudMongoURI, {
-    serverSelectionTimeoutMS: 5000 
-})
-.then(() => console.log('🛡️ Private secure ledger (MongoDB Cloud Atlas) operational.'))
-.catch(err => {
-    console.error('❌ MONGODB CLOUD CONNECTION PIPELINE ERROR:', err.message);
-});
+let isConnected = false;
+async function connectDatabase() {
+    if (isConnected) return;
+    
+    if (mongoose.connection.readyState === 1) {
+        isConnected = true;
+        return;
+    }
+
+    await mongoose.connect(cloudMongoURI, {
+        serverSelectionTimeoutMS: 5000 
+    });
+    isConnected = true;
+    console.log('🛡️ Private secure ledger (MongoDB Cloud Atlas) operational.');
+}
 
 // Database Schemas
 const UserSchema = new mongoose.Schema({
@@ -79,6 +87,7 @@ app.get('/dashboard', requireAuth, (req, res) => res.redirect('/dashboard.html')
 // Renders dashboard template layers with database object payloads
 app.get('/dashboard.html', requireAuth, async (req, res) => {
     try {
+        await connectDatabase();
         const user = await User.findById(req.session.userId);
         if (!user) return res.redirect('/auth.html');
         res.render('dashboard.html', { user });
@@ -92,6 +101,7 @@ app.get('/budget', requireAuth, (req, res) => res.redirect('/budget.html'));
 
 app.get('/budget.html', requireAuth, async (req, res) => {
     try {
+        await connectDatabase();
         const user = await User.findById(req.session.userId);
         if (!user) return res.redirect('/auth.html');
         res.render('budget.html', { user });
@@ -105,6 +115,7 @@ app.get('/expense', requireAuth, (req, res) => res.redirect('/expense.html'));
 
 app.get('/expense.html', requireAuth, async (req, res) => {
     try {
+        await connectDatabase();
         const user = await User.findById(req.session.userId);
         if (!user) return res.redirect('/auth.html');
         res.render('expense.html', { user }); 
@@ -118,6 +129,7 @@ app.get('/profile', requireAuth, (req, res) => res.redirect('/profile.html'));
 
 app.get('/profile.html', requireAuth, async (req, res) => {
     try {
+        await connectDatabase();
         const user = await User.findById(req.session.userId);
         if (!user) return res.redirect('/auth.html');
         res.render('profile.html', { user }); 
@@ -132,6 +144,8 @@ app.get('/profile.html', requireAuth, async (req, res) => {
 // Handle Sign Up
 app.post('/auth/signup', async (req, res) => {
     try {
+        await connectDatabase();
+        
         const { name, email, password } = req.body;
         
         if (!name || !email || !password) {
@@ -168,6 +182,8 @@ app.post('/auth/signup', async (req, res) => {
 // Handle Login
 app.post('/auth/login', async (req, res) => {
     try {
+        await connectDatabase();
+        
         const { email, password } = req.body;
         
         if (!email || !password) {
@@ -203,6 +219,7 @@ app.get('/auth/logout', (req, res) => {
 
 app.get('/api/budgets', async (req, res) => {
     try {
+        await connectDatabase();
         if (!req.session.userId) {
             return res.status(401).json({ success: false, message: "Unauthorized access." });
         }
@@ -217,6 +234,7 @@ app.get('/api/budgets', async (req, res) => {
 
 app.post('/api/budgets/edit', requireAuth, async (req, res) => {
     try {
+        await connectDatabase();
         const { oldName, newName, newAmount } = req.body;
         if (!oldName || !newName || !newAmount || isNaN(newAmount) || Number(newAmount) <= 0) {
             return res.status(400).json({ success: false, message: "Valid inputs required." });
@@ -248,6 +266,7 @@ app.post('/api/budgets/edit', requireAuth, async (req, res) => {
 
 app.post('/api/budgets/delete', requireAuth, async (req, res) => {
     try {
+        await connectDatabase();
         const { budgetName } = req.body;
         if (!budgetName) return res.status(400).json({ success: false, message: "Target required." });
 
@@ -267,6 +286,7 @@ app.post('/api/budgets/delete', requireAuth, async (req, res) => {
 
 app.post('/api/budgets/create', requireAuth, async (req, res) => {
     try {
+        await connectDatabase();
         const { name, amount, icon } = req.body;
         if (!name || !amount || isNaN(amount) || Number(amount) <= 0) {
             return res.status(400).json({ success: false, message: "Valid inputs required." });
@@ -292,6 +312,7 @@ app.post('/api/budgets/create', requireAuth, async (req, res) => {
 
 app.post('/api/expenses/create', requireAuth, async (req, res) => {
     try {
+        await connectDatabase();
         const { name, amount, budgetName } = req.body;
         if (!name || !amount || isNaN(amount) || Number(amount) <= 0) {
             return res.status(400).json({ success: false, message: "Valid variables required." });
@@ -330,6 +351,7 @@ app.post('/api/expenses/create', requireAuth, async (req, res) => {
 
 app.post('/api/expenses/delete/:id', requireAuth, async (req, res) => {
     try {
+        await connectDatabase();
         const expenseId = req.params.id;
         const user = await User.findById(req.session.userId);
         if (!user) return res.status(404).json({ success: false, message: "Identity node not found." });
@@ -351,6 +373,7 @@ app.post('/api/expenses/delete/:id', requireAuth, async (req, res) => {
         res.status(500).json({ success: false, message: "Server sub-document array mutation failure." });
     }
 });
+
 /* ================= FALLBACK ENGINE ROUTING ================= */
 
 // Base entry root path serves index.html natively out of the bundled task workspace
@@ -378,6 +401,7 @@ app.get('/:page', async (req, res, next) => {
                 return res.redirect('/auth.html');
             }
 
+            await connectDatabase();
             const user = await User.findById(req.session.userId);
             if (!user) return res.redirect('/auth.html');
             
