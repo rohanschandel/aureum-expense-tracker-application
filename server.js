@@ -381,13 +381,21 @@ app.post('/api/expenses/delete/:id', requireAuth, async (req, res) => {
 
 /* ================= FALLBACK ENGINE ROUTING ================= */
 
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+// Base entry root path redirects straight to auth or index via render engine
+app.get('/', (req, res) => {
+    try {
+        return res.render('index.html');
+    } catch (err) {
+        res.status(404).send("Root file index node execution fault.");
+    }
+});
 
+// Whitelisted page routing matrix using strict absolute EJS templates
 app.get('/:page', async (req, res, next) => {
     const filename = req.params.page;
     
     try {
-        // Added expense.html to the whitelist matrix
+        // 1. Guard-protected pages that absolutely REQUIRE a live session
         if (filename === 'dashboard.html' || filename === 'budget.html' || filename === 'profile.html' || filename === 'expense.html') {
             if (!req.session || !req.session.userId) {
                 return res.redirect('/auth.html');
@@ -398,19 +406,22 @@ app.get('/:page', async (req, res, next) => {
             return res.render(filename, { user }); 
         }
         
+        // 2. 🔥 FIXED FOR VERCEL: Render public files (like auth.html) via template instead of breaking on sendFile!
         if (filename.endsWith('.html')) {
-            return res.sendFile(path.join(__dirname, filename));
+            // Pass an empty object or basic layout variables if EJS requires it
+            return res.render(filename, { user: null });
         }
         
         next();
     } catch (err) {
-        console.error("Fallback rendering pipeline fault:", err);
-        res.redirect('/auth.html');
+        console.error("Fallback template rendering pipeline fault:", err);
+        res.status(404).send("Requested asset view node not found.");
     }
 });
 
 app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Telemetry pipeline open at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Telemetry pipeline open at port ${PORT}`));
+
 module.exports = app;
