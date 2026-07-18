@@ -353,13 +353,15 @@ app.post('/api/expenses/delete/:id', requireAuth, async (req, res) => {
 });
 /* ================= FALLBACK ENGINE ROUTING ================= */
 
-// Base entry root path serves index.html natively
+// Base entry root path serves index.html natively out of the bundled task workspace
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'), (err) => {
+    const indexPath = path.resolve(__dirname, 'index.html');
+    res.sendFile(indexPath, (err) => {
         if (err) {
             // Fallback automatically to auth gateway if index isn't found
-            res.sendFile(path.join(__dirname, 'auth.html'), (err2) => {
-                if (err2) res.status(404).send("Ledger entry portal file missing.");
+            const authPath = path.resolve(__dirname, 'auth.html');
+            res.sendFile(authPath, (err2) => {
+                if (err2) res.status(404).send("Ledger entry portal file missing from system build.");
             });
         }
     });
@@ -385,7 +387,7 @@ app.get('/:page', async (req, res, next) => {
         
         // 2. Public static views (like auth.html) served safely without path errors
         if (filename.endsWith('.html')) {
-            return res.sendFile(path.join(__dirname, filename), (err) => {
+            return res.sendFile(path.resolve(__dirname, filename), (err) => {
                 if (err) next();
             });
         }
@@ -397,12 +399,12 @@ app.get('/:page', async (req, res, next) => {
     }
 });
 
-// Static middleware layer to serve companion files like auth.js and auth.css automatically
-app.use(express.static(path.join(__dirname)));
+// Static middleware layer to serve companion assets natively
+app.use(express.static(path.resolve(__dirname)));
 
-// Catch-all route for unhandled requests
+// Catch-all route for unhandled requests redirects straight to login page
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'auth.html'), (err) => {
+    res.sendFile(path.resolve(__dirname, 'auth.html'), (err) => {
         if (err) res.status(404).send("Requested endpoint template context not found.");
     });
 });
