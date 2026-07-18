@@ -406,11 +406,10 @@ app.get('/:page', async (req, res, next) => {
             return res.render(filename, { user }); 
         }
         
-        // 2. 🔥 FIXED FOR VERCEL: Render public files (like auth.html) via template instead of breaking on sendFile!
-        if (filename.endsWith('.html')) {
-            // Pass an empty object or basic layout variables if EJS requires it
-            return res.render(filename, { user: null });
-        }
+        // 2. FIXED FOR VERCEL: Render public files absolute paths
+if (filename.endsWith('.html')) {
+    return res.render(path.join(__dirname, filename), { user: null });
+}
         
         next();
     } catch (err) {
