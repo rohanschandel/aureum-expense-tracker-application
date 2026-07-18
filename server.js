@@ -1,8 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const cookieSession = require('cookie-session'); // 🔥 Swapped to serverless-native session management
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const ejs = require('ejs');
@@ -38,7 +37,6 @@ const UserSchema = new mongoose.Schema({
     ]
 });
 
-// This prevents Mongoose from trying to re-compile the model on every serverless function wake-up
 const User = mongoose.models.User || mongoose.model('User', UserSchema);
 
 // Middleware Config Matrix
@@ -48,27 +46,14 @@ app.use(express.json());
 // Serve static assets out of path mapping variables
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-// 🔥 CRITICAL FIX FOR VERCEL SERVERLESS DEPLOYMENTS:
-// Tells Express to trust the Vercel HTTPS reverse proxy layers, allowing cookies to securely register.
+// 🔥 Bulletproof Cookie Session Config for Vercel Architecture:
 app.set('trust proxy', 1);
-
-// 🔥 CRITICAL FIX FOR VERCEL SERVERLESS DEPLOYMENTS:
-app.set('trust proxy', 1);
-
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'aureum_secure_vault_key',
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-        client: mongoose.connection.getClient(), // 🔥 EXACT V5 SYNTAX: Re-uses your active mongoose database client directly
-        ttl: 24 * 60 * 60,                        // Sessions expire after 1 day
-        autoRemove: 'native'
-    }),
-    cookie: { 
-        maxAge: 24 * 60 * 60 * 1000, 
-        secure: true,                
-        sameSite: 'none'             
-    }
+app.use(cookieSession({
+    name: 'session',
+    keys: [process.env.SESSION_SECRET || 'aureum_secure_vault_key'],
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    secure: true,
+    sameSite: 'none'
 }));
 
 // MAP EJS TO RENDER .HTML FILES DIRECTLY WITH FIXED ABSOLUTE PATH RESOLUTIONS
@@ -168,7 +153,6 @@ app.post('/auth/signup', async (req, res) => {
             return res.status(400).json({ success: false, message: 'This email is already registered.' });
         }
 
-        // 🔥 USE SYNC HASHING FOR STABILITY UNDER SERVERLESS CONTEXT TIMEOUT LIMITS
         const hashedPassword = bcrypt.hashSync(password, 12);
         
         const defaultBudgets = [];
@@ -186,13 +170,7 @@ app.post('/auth/signup', async (req, res) => {
         await newUser.save();
         
         req.session.userId = newUser._id.toString();
-        req.session.save((err) => {
-            if (err) {
-                console.error("Signup session save fault:", err);
-                return res.status(500).json({ success: false, message: "Session synchronization fault." });
-            }
-            return res.json({ success: true, redirectUrl: '/dashboard.html' });
-        });
+        return res.json({ success: true, redirectUrl: '/dashboard.html' });
         
     } catch (error) {
         console.error("SIGNUP PIPELINE FAULT:", error);
@@ -220,13 +198,7 @@ app.post('/auth/login', async (req, res) => {
         }
 
         req.session.userId = user._id.toString();
-        req.session.save((err) => {
-            if (err) {
-                console.error("Login session save failure:", err);
-                return res.status(500).json({ success: false, message: "Session assignment failure." });
-            }
-            return res.json({ success: true, redirectUrl: '/dashboard.html' });
-        });
+        return res.json({ success: true, redirectUrl: '/dashboard.html' });
         
     } catch (error) {
         console.error("LOGIN PIPELINE CRITICAL ERROR:", error);
@@ -236,9 +208,8 @@ app.post('/auth/login', async (req, res) => {
 
 // Handle Logout
 app.get('/auth/logout', (req, res) => {
-    req.session.destroy(() => {
-        res.redirect('/auth.html');
-    });
+    req.session = null; // Clears cookie-session seamlessly
+    res.redirect('/auth.html');
 });
 
 // API Endpoint to Edit an Existing Budget Card Name and Amount
@@ -396,7 +367,6 @@ app.post('/api/expenses/delete/:id', requireAuth, async (req, res) => {
 
 /* ================= FALLBACK ENGINE ROUTING ================= */
 
-// Base entry root path redirects straight to auth or index via render engine
 app.get('/', (req, res) => {
     try {
         return res.render(path.join(__dirname, 'index.html'));
@@ -405,7 +375,6 @@ app.get('/', (req, res) => {
     }
 });
 
-// Whitelisted page routing matrix using strict absolute EJS templates
 app.get('/:page', async (req, res, next) => {
     const filename = req.params.page;
     
