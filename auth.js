@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const toSignupBtn = document.getElementById('to-signup-trigger');
     const toSigninBtn = document.getElementById('to-signin-trigger');
 
-    // UI Tab Toggle Logic
+    // UI View Toggle Transitions
     if (toSignupBtn && toSigninBtn) {
         toSignupBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -27,17 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 🔥 FORTIFIED GLOBAL DELEGATION EVENT LISTENER: Catches submission perfectly on all views
+    // Capture submissions globally via Document Event Delegation
     document.addEventListener('submit', async (e) => {
         const targetForm = e.target;
         
-        // Match the submit routes explicitly
         if (targetForm.id === 'login-form' || targetForm.id === 'signup-form') {
-            e.preventDefault(); // Stop URL injection bar parameters instantly
+            e.preventDefault(); // Stop native HTML browser parameters reloading into the URL bar
             
             const endpointPath = targetForm.id === 'login-form' ? '/auth/login' : '/auth/signup';
             
-            // Extract the secure dataset mapping arrays
             const formData = new FormData(targetForm);
             const dataPayload = Object.fromEntries(formData.entries());
 
@@ -51,12 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
 
                 if (result.success && result.redirectUrl) {
-                    window.location.href = result.redirectUrl; // Redirect smoothly to dashboard.html
+                    // Force the browser directly into the target dashboard EJS endpoint matrix
+                    window.location.href = result.redirectUrl; 
                 } else {
-                    alert(result.message || "Credential configuration rejected.");
+                    alert(result.message || "Authentication rejected.");
                 }
             } catch (err) {
-                console.error("Transmission Exception:", err);
+                console.error("Transmission error:", err);
                 alert("Authentication engine communication fault.");
             }
         }

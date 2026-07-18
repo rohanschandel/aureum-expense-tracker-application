@@ -1,15 +1,17 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const cookieSession = require('cookie-session'); // 🔥 Swapped to serverless-native session management
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const ejs = require('ejs');
 
 const app = express();
 
-// DATABASE CONNECTION (MongoDB Atlas Cloud Vault)
-const cloudMongoURI = process.env.MONGO_URI || 'mongodb+srv://rohan9922758495_db_user:0PfjjeLkaNU0EKwm@rohan000.ea5li24.mongodb.net/aureum?retryWrites=true&w=majority&appName=Rohan000';
+// DATABASE CONNECTION (MongoDB Atlas Cloud Vault - Enforces production string override fallback structures)
+const cloudMongoURI = process.env.MONGO_URI && !process.env.MONGO_URI.includes('127.0.0.1') 
+    ? process.env.MONGO_URI 
+    : 'mongodb+srv://rohan9922758495_db_user:0PfjjeLkaNU0EKwm@rohan000.ea5li24.mongodb.net/aureum?retryWrites=true&w=majority&appName=Rohan000';
 
 mongoose.connect(cloudMongoURI, {
     serverSelectionTimeoutMS: 5000 
@@ -46,22 +48,22 @@ app.use(express.json());
 // Serve static assets out of path mapping variables
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-// 🔥 Bulletproof Cookie Session Config for Vercel Architecture:
+// Enforce proxy evaluations for secure edge verification tracking layers
 app.set('trust proxy', 1);
 app.use(cookieSession({
     name: 'session',
     keys: [process.env.SESSION_SECRET || 'aureum_secure_vault_key'],
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    maxAge: 24 * 60 * 60 * 1000, 
     secure: true,
     sameSite: 'none'
 }));
 
-// MAP EJS TO RENDER .HTML FILES DIRECTLY WITH FIXED ABSOLUTE PATH RESOLUTIONS
+// MAP EJS TO RENDER VIEW MATRIX TEMPLATES
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname)); 
 
-// Authentication Route Guard (Targeting auth.html gateway)
+// Authentication Route Guard
 const requireAuth = (req, res, next) => {
     if (req.session && req.session.userId) {
         next();
@@ -72,70 +74,60 @@ const requireAuth = (req, res, next) => {
 
 /* ================= SYSTEM OPERATIONAL ROUTES ================= */
 
-// Clean path fallback maps straight to dashboard.html
 app.get('/dashboard', requireAuth, (req, res) => res.redirect('/dashboard.html'));
 
-// Dynamic Point of Truth: Renders dashboard.html directly using the EJS rendering engine
+// Renders dashboard template layers with database object payloads
 app.get('/dashboard.html', requireAuth, async (req, res) => {
     try {
         const user = await User.findById(req.session.userId);
         if (!user) return res.redirect('/auth.html');
-        res.render(path.join(__dirname, 'dashboard.html'), { user });
+        res.render('dashboard.html', { user });
     } catch (err) {
         console.error("Dashboard render failed:", err);
         res.redirect('/auth.html');
     }
 });
 
-// Example data retrieval route for Budgets
-app.get('/api/budgets', async (req, res) => {
-    try {
-        if (!req.session.userId) {
-            return res.status(401).json({ success: false, message: "Unauthorized access." });
-        }
-        const user = await User.findById(req.session.userId);
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User not found." });
-        }
-        res.json({ success: true, budgets: user.budgets || [] });
-    } catch (error) {
-        console.error("Fetch budgets system failure:", error);
-        res.status(500).json({ success: false, message: "Internal server data retrieval failure." });
-    }
-});
-
 app.get('/budget', requireAuth, (req, res) => res.redirect('/budget.html'));
 
-// Dynamic Expenses Master Ledger View Allocation Route Handler
-app.get('/expense.html', requireAuth, async (req, res) => {
+app.get('/budget.html', requireAuth, async (req, res) => {
     try {
         const user = await User.findById(req.session.userId);
         if (!user) return res.redirect('/auth.html');
-        res.render(path.join(__dirname, 'expense.html'), { user }); 
+        res.render('budget.html', { user });
     } catch (err) {
-        console.error("Expense master grid view rendering fault:", err);
+        console.error("Budget view render failed:", err);
         res.redirect('/dashboard.html');
     }
 });
 
 app.get('/expense', requireAuth, (req, res) => res.redirect('/expense.html'));
 
-// Dynamic Profile View Engine Allocation Route Handler
+app.get('/expense.html', requireAuth, async (req, res) => {
+    try {
+        const user = await User.findById(req.session.userId);
+        if (!user) return res.redirect('/auth.html');
+        res.render('expense.html', { user }); 
+    } catch (err) {
+        console.error("Expense ledger rendering fault:", err);
+        res.redirect('/dashboard.html');
+    }
+});
+
+app.get('/profile', requireAuth, (req, res) => res.redirect('/profile.html'));
+
 app.get('/profile.html', requireAuth, async (req, res) => {
     try {
         const user = await User.findById(req.session.userId);
         if (!user) return res.redirect('/auth.html');
-        res.render(path.join(__dirname, 'profile.html'), { user }); 
+        res.render('profile.html', { user }); 
     } catch (err) {
         console.error("Profile view rendering fault:", err);
         res.redirect('/dashboard.html');
     }
 });
 
-// Clear Path Alias Fallback Utility Mapping Link
-app.get('/profile', requireAuth, (req, res) => res.redirect('/profile.html'));
-
-/* ================= AUTH ROUTES (JSON API COMPATIBLE) ================= */
+/* ================= DYNAMIC AUTH API PIPELINES ================= */
 
 // Handle Sign Up
 app.post('/auth/signup', async (req, res) => {
@@ -147,28 +139,23 @@ app.post('/auth/signup', async (req, res) => {
         }
 
         const cleanEmail = email.trim().toLowerCase();
-        
         const existingUser = await User.findOne({ email: cleanEmail });
         if (existingUser) {
             return res.status(400).json({ success: false, message: 'This email is already registered.' });
         }
 
         const hashedPassword = bcrypt.hashSync(password, 12);
-        
-        const defaultBudgets = [];
-        const defaultExpenses = [];
 
         const newUser = new User({
             name: name.trim(),
             email: cleanEmail,
             password: hashedPassword,
             avatarLetter: name.trim().charAt(0).toUpperCase(),
-            budgets: defaultBudgets,
-            expenses: defaultExpenses
+            budgets: [],
+            expenses: []
         });
 
         await newUser.save();
-        
         req.session.userId = newUser._id.toString();
         return res.json({ success: true, redirectUrl: '/dashboard.html' });
         
@@ -208,17 +195,31 @@ app.post('/auth/login', async (req, res) => {
 
 // Handle Logout
 app.get('/auth/logout', (req, res) => {
-    req.session = null; // Clears cookie-session seamlessly
+    req.session = null; 
     res.redirect('/auth.html');
 });
 
-// API Endpoint to Edit an Existing Budget Card Name and Amount
+/* ================= OPERATIONAL PORTFOLIO API CORE ================= */
+
+app.get('/api/budgets', async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({ success: false, message: "Unauthorized access." });
+        }
+        const user = await User.findById(req.session.userId);
+        if (!user) return res.status(404).json({ success: false, message: "User not found." });
+        res.json({ success: true, budgets: user.budgets || [] });
+    } catch (error) {
+        console.error("Fetch budgets system failure:", error);
+        res.status(500).json({ success: false, message: "Internal server data retrieval failure." });
+    }
+});
+
 app.post('/api/budgets/edit', requireAuth, async (req, res) => {
     try {
         const { oldName, newName, newAmount } = req.body;
-
         if (!oldName || !newName || !newAmount || isNaN(newAmount) || Number(newAmount) <= 0) {
-            return res.status(400).json({ success: false, message: "Valid name parameters and limit amounts are required." });
+            return res.status(400).json({ success: false, message: "Valid inputs required." });
         }
 
         const user = await User.findById(req.session.userId);
@@ -240,19 +241,15 @@ app.post('/api/budgets/edit', requireAuth, async (req, res) => {
         await user.save();
         res.json({ success: true });
     } catch (err) {
-        console.error("Budget update engine pipeline fault:", err);
-        res.status(500).json({ success: false, message: "Server database update mutation failure." });
+        console.error("Budget update error:", err);
+        res.status(500).json({ success: false, message: "Server database update failure." });
     }
 });
 
-// API Endpoint to Delete a Budget Category and Purge its Expenses
 app.post('/api/budgets/delete', requireAuth, async (req, res) => {
     try {
         const { budgetName } = req.body;
-
-        if (!budgetName) {
-            return res.status(400).json({ success: false, message: "Category identification target required." });
-        }
+        if (!budgetName) return res.status(400).json({ success: false, message: "Target required." });
 
         const user = await User.findById(req.session.userId);
         if (!user) return res.status(404).json({ success: false, message: "Identity node not found." });
@@ -263,20 +260,16 @@ app.post('/api/budgets/delete', requireAuth, async (req, res) => {
         await user.save();
         res.json({ success: true });
     } catch (err) {
-        console.error("Budget removal engine pipeline fault:", err);
+        console.error("Budget removal error:", err);
         res.status(500).json({ success: false, message: "Server document structural deletion failure." });
     }
 });
 
-/* ================= SYSTEM DATA API CREATIONS ================= */
-
-// Async API Route to insert a new budget into the user's document arrays
 app.post('/api/budgets/create', requireAuth, async (req, res) => {
     try {
         const { name, amount, icon } = req.body;
-        
         if (!name || !amount || isNaN(amount) || Number(amount) <= 0) {
-            return res.status(400).json({ success: false, message: "Valid budget name and amount are required." });
+            return res.status(400).json({ success: false, message: "Valid inputs required." });
         }
 
         const newBudgetCard = {
@@ -290,21 +283,18 @@ app.post('/api/budgets/create', requireAuth, async (req, res) => {
         await User.findByIdAndUpdate(req.session.userId, {
             $push: { budgets: newBudgetCard }
         });
-
         res.json({ success: true });
     } catch (err) {
-        console.error("Budget creation pipeline failure:", err);
+        console.error("Budget creation failure:", err);
         res.status(500).json({ success: false, message: "Internal server parameter fault." });
     }
 });
 
-// Async API Route to append a new expense transaction and recalculate budget metrics
 app.post('/api/expenses/create', requireAuth, async (req, res) => {
     try {
         const { name, amount, budgetName } = req.body;
-        
         if (!name || !amount || isNaN(amount) || Number(amount) <= 0) {
-            return res.status(400).json({ success: false, message: "Valid name and transaction amount are required." });
+            return res.status(400).json({ success: false, message: "Valid variables required." });
         }
 
         const numericAmount = Number(amount);
@@ -331,15 +321,13 @@ app.post('/api/expenses/create', requireAuth, async (req, res) => {
 
         user.expenses.unshift(newExpense);
         await user.save();
-
         res.json({ success: true });
     } catch (err) {
-        console.error("Expense deployment pipeline error:", err);
+        console.error("Expense deployment error:", err);
         res.status(500).json({ success: false, message: "Internal server registry allocation failure." });
     }
 });
 
-// Async API Route to delete individual expenses from the database master document
 app.post('/api/expenses/delete/:id', requireAuth, async (req, res) => {
     try {
         const expenseId = req.params.id;
@@ -357,57 +345,17 @@ app.post('/api/expenses/delete/:id', requireAuth, async (req, res) => {
 
         user.expenses.pull({ _id: expenseId });
         await user.save();
-
         res.json({ success: true });
     } catch (err) {
-        console.error("Expense ledger deletion execution fault:", err);
+        console.error("Expense ledger deletion error:", err);
         res.status(500).json({ success: false, message: "Server sub-document array mutation failure." });
     }
 });
 
-/* ================= FALLBACK ENGINE ROUTING ================= */
-
-// Base entry root path serves index.html directly
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'), (err) => {
-        if (err) res.status(404).send("Root index file not found.");
-    });
+// Fallback Route Handler
+app.get('*', (req, res) => {
+    res.status(404).send("Requested endpoint template context not found.");
 });
-
-// Whitelisted page routing matrix using stable absolute path serving
-app.get('/:page', async (req, res, next) => {
-    const filename = req.params.page;
-    
-    try {
-        // 1. Guard-protected dashboard pages that REQUIRE an active session & DB lookup
-        if (filename === 'dashboard.html' || filename === 'budget.html' || filename === 'profile.html' || filename === 'expense.html') {
-            if (!req.session || !req.session.userId) {
-                return res.redirect('/auth.html');
-            }
-
-            const user = await User.findById(req.session.userId);
-            if (!user) return res.redirect('/auth.html');
-            
-            // Render user profile variables using EJS dynamically
-            return res.render(filename, { user }); 
-        }
-        
-        // 2. Public static views (like auth.html) served safely without EJS lookup exceptions
-        if (filename.endsWith('.html')) {
-            return res.sendFile(path.join(__dirname, filename), (err) => {
-                if (err) next();
-            });
-        }
-        
-        next();
-    } catch (err) {
-        console.error("Fallback path resolution error:", err);
-        res.status(404).send("Requested asset view node not found.");
-    }
-});
-
-// Static middleware fallback
-app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Telemetry pipeline open at port ${PORT}`));
