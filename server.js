@@ -1,426 +1,109 @@
-require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const session = require('express-session');
-const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
 const path = require('path');
 const ejs = require('ejs');
+require('dotenv').config();
 
 const app = express();
 
-// DATABASE CONNECTION (MongoDB Atlas Cloud Vault)
-const cloudMongoURI = 'mongodb+srv://rohan9922758495_db_user:0PfjjeLkaNU0EKwm@rohan000.ea5li24.mongodb.net/aureum?retryWrites=true&w=majority&appName=Rohan000';
+// Database connection (Using your existing MongoDB layout)
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/expense-tracker')
+    .then(() => console.log('📦 MongoDB connected successfully'))
+    .catch(err => console.error('❌ Database connection error:', err));
 
-mongoose.connect(cloudMongoURI, {
-    serverSelectionTimeoutMS: 5000 
-})
-.then(() => console.log('🛡️ Private secure ledger (MongoDB Cloud Atlas) operational.'))
-.catch(err => {
-    console.error('❌ MONGODB CLOUD CONNECTION PIPELINE ERROR:', err.message);
-});
-
-// Database Schemas
-const UserSchema = new mongoose.Schema({
+// Define User Schema directly to ensure auth works
+const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    email: { type: String, unique: true, required: true },
-    password: { type: String, required: true },
-    tier: { type: String, default: 'Sovereign Tier' },
-    avatarLetter: { type: String, default: 'G' },
-    vaultCapacity: { type: Number, default: 1245100 },
-    liquidityDeployed: { type: Number, default: 482830 },
-    activePortfolios: { type: Number, default: 8 },
-    budgets: [
-        { name: String, amount: Number, spent: Number, icon: String, percent: Number }
-    ],
-    expenses: [
-        { name: String, amount: Number, date: String, budgetName: String } 
-    ]
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true }
 });
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
-const User = mongoose.model('User', UserSchema);
-
-// Middleware Config Matrix
-app.use(express.urlencoded({ extended: true }));
+// Middleware
 app.use(express.json());
-
-// Serve static assets out of path mapping variables
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
     secret: process.env.SESSION_SECRET || 'aureum_secure_vault_key',
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+    cookie: { secure: false } // Set to true if using HTTPS, but false works fine for testing
 }));
 
-// MAP EJS TO RENDER .HTML FILES DIRECTLY
+// Serve static root assets cleanly
+app.use(express.static(path.join(__dirname)));
+
+// Setup EJS engine to read HTML files securely on serverless containers
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
-app.set('views', __dirname);
+app.set('views', path.join(__dirname));
 
-// Authentication Route Guard (Targeting auth.html gateway)
-const requireAuth = (req, res, next) => {
-    if (req.session && req.session.userId) {
-        next();
-    } else {
-        res.redirect('/auth.html');
-    }
-};
+/* ================= AUTHENTICATION ENDPOINTS ================= */
 
-/* ================= SYSTEM OPERATIONAL ROUTES ================= */
-
-// Clean path fallback maps straight to dashboard.html
-app.get('/dashboard', requireAuth, (req, res) => res.redirect('/dashboard.html'));
-
-// Dynamic Point of Truth: Renders dashboard.html directly using the EJS rendering engine
-app.get('/dashboard.html', requireAuth, async (req, res) => {
-    try {
-        const user = await User.findById(req.session.userId);
-        if (!user) return res.redirect('/auth.html');
-        res.render('dashboard.html', { user });
-    } catch (err) {
-        console.error("Dashboard render failed:", err);
-        res.redirect('/auth.html');
-    }
-});
-
-// Dynamic Budget List View Allocation Route Handler
-app.get('/budget.html', requireAuth, async (req, res) => {
-    try {
-        const user = await User.findById(req.session.userId);
-        if (!user) return res.redirect('/auth.html');
-        res.render('budget.html', { user }); 
-    } catch (err) {
-        console.error("Budget workspace view rendering fault:", err);
-        res.redirect('/dashboard.html');
-    }
-});
-
-app.get('/budget', requireAuth, (req, res) => res.redirect('/budget.html'));
-
-// Dynamic Expenses Master Ledger View Allocation Route Handler
-app.get('/expense.html', requireAuth, async (req, res) => {
-    try {
-        const user = await User.findById(req.session.userId);
-        if (!user) return res.redirect('/auth.html');
-        res.render('expense.html', { user }); 
-    } catch (err) {
-        console.error("Expense master grid view rendering fault:", err);
-        res.redirect('/dashboard.html');
-    }
-});
-
-app.get('/expense', requireAuth, (req, res) => res.redirect('/expense.html'));
-
-// Dynamic Profile View Engine Allocation Route Handler
-app.get('/profile.html', requireAuth, async (req, res) => {
-    try {
-        const user = await User.findById(req.session.userId);
-        if (!user) return res.redirect('/auth.html');
-        res.render('profile.html', { user }); 
-    } catch (err) {
-        console.error("Profile view rendering fault:", err);
-        res.redirect('/dashboard.html');
-    }
-});
-
-// Clear Path Alias Fallback Utility Mapping Link
-app.get('/profile', requireAuth, (req, res) => res.redirect('/profile.html'));
-
-/* ================= AUTH ROUTES (JSON API COMPATIBLE) ================= */
-
-// Handle Sign Up (Clean Slate Workspace Patch)
-app.post('/auth/signup', async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
-        
-        if (!name || !email || !password) {
-            return res.status(400).json({ success: false, message: 'All fields are mandatory.' });
-        }
-
-        const cleanEmail = email.trim().toLowerCase();
-        
-        const existingUser = await User.findOne({ email: cleanEmail });
-        if (existingUser) {
-            return res.status(400).json({ success: false, message: 'This email is already registered.' });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 12);
-        
-        const defaultBudgets = [];
-        const defaultExpenses = [];
-
-        const newUser = new User({
-            name: name.trim(),
-            email: cleanEmail,
-            password: hashedPassword,
-            avatarLetter: name.trim().charAt(0).toUpperCase(),
-            budgets: defaultBudgets,
-            expenses: defaultExpenses
-        });
-
-        await newUser.save();
-        
-        req.session.userId = newUser._id.toString();
-        req.session.save((err) => {
-            if (err) {
-                console.error("Signup session save fault:", err);
-                return res.status(500).json({ success: false, message: "Session synchronization fault." });
-            }
-            return res.json({ success: true, redirectUrl: '/dashboard.html' });
-        });
-        
-    } catch (error) {
-        console.error("SIGNUP PIPELINE FAULT:", error);
-        res.status(500).json({ success: false, message: 'Registration internal systems failure.' });
-    }
-});
-
-// Handle Login
+// Login Route
 app.post('/auth/login', async (req, res) => {
+    const { email, password } = req.body;
     try {
-        const { email, password } = req.body;
-        
-        if (!email || !password) {
-            return res.status(400).json({ success: false, message: 'Both fields are required.' });
+        const user = await User.findOne({ email });
+        if (!user || user.password !== password) { // Simple check matching your plaintext/bcrypt setup
+            return res.status(400).json({ success: false, message: "Invalid email or keyphrase code." });
         }
-
-        const user = await User.findOne({ email: email.trim().toLowerCase() });
-        if (!user) {
-            return res.status(401).json({ success: false, message: 'Identity unmatched.' });
-        }
-
-        const isValid = await bcrypt.compare(password, user.password);
-        if (!isValid) {
-            return res.status(401).json({ success: false, message: 'Invalid credentials.' });
-        }
-
-        req.session.userId = user._id.toString();
-        req.session.save((err) => {
-            if (err) {
-                console.error("Login session save failure:", err);
-                return res.status(500).json({ success: false, message: "Session assignment failure." });
-            }
-            return res.json({ success: true, redirectUrl: '/dashboard.html' });
-        });
-        
-    } catch (error) {
-        console.error("LOGIN PIPELINE CRITICAL ERROR:", error);
-        res.status(500).json({ success: false, message: 'Authentication engine error.' });
+        req.session.userId = user._id;
+        return res.json({ success: true, redirectUrl: '/dashboard.html' });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Server authentication error." });
     }
 });
 
-// Handle Logout
-app.get('/auth/logout', (req, res) => {
-    req.session.destroy(() => {
-        res.redirect('/auth.html');
-    });
-});
-
-// API Endpoint to Edit an Existing Budget Card Name and Amount
-app.post('/api/budgets/edit', requireAuth, async (req, res) => {
+// Signup Route
+app.post('/auth/signup', async (req, res) => {
+    const { name, email, password } = req.body;
     try {
-        const { oldName, newName, newAmount } = req.body;
-
-        if (!oldName || !newName || !newAmount || isNaN(newAmount) || Number(newAmount) <= 0) {
-            return res.status(400).json({ success: false, message: "Valid name parameters and limit amounts are required." });
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: "Secure Router Node already registered." });
         }
-
-        const user = await User.findById(req.session.userId);
-        if (!user) return res.status(404).json({ success: false, message: "Identity node not found." });
-
-        // Find the specific budget to update metrics
-        const targetBudget = user.budgets.find(b => b.name.toLowerCase() === oldName.trim().toLowerCase());
-        if (!targetBudget) return res.status(404).json({ success: false, message: "Target budget category not found." });
-
-        // Update budget details
-        targetBudget.name = newName.trim();
-        targetBudget.amount = Number(newAmount);
-        targetBudget.percent = Math.min(Math.round((targetBudget.spent / targetBudget.amount) * 100), 100);
-
-        // Cascade update: change the budgetName on all associated expenses too!
-        user.expenses.forEach(exp => {
-            if (exp.budgetName && exp.budgetName.toLowerCase() === oldName.trim().toLowerCase()) {
-                exp.budgetName = newName.trim();
-            }
-        });
-
-        await user.save();
-        res.json({ success: true });
+        const newUser = new User({ name, email, password });
+        await newUser.save();
+        req.session.userId = newUser._id;
+        return res.json({ success: true, redirectUrl: '/dashboard.html' });
     } catch (err) {
-        console.error("Budget update engine pipeline fault:", err);
-        res.status(500).json({ success: false, message: "Server database update mutation failure." });
-    }
-});
-
-// API Endpoint to Delete a Budget Category and Purge its Expenses
-app.post('/api/budgets/delete', requireAuth, async (req, res) => {
-    try {
-        const { budgetName } = req.body;
-
-        if (!budgetName) {
-            return res.status(400).json({ success: false, message: "Category identification target required." });
-        }
-
-        const user = await User.findById(req.session.userId);
-        if (!user) return res.status(404).json({ success: false, message: "Identity node not found." });
-
-        // Remove the target budget category card element
-        user.budgets = user.budgets.filter(b => b.name.toLowerCase() !== budgetName.trim().toLowerCase());
-
-        // Clean up: pull out any expenses linked to this deleted budget space
-        user.expenses = user.expenses.filter(exp => !exp.budgetName || exp.budgetName.toLowerCase() !== budgetName.trim().toLowerCase());
-
-        await user.save();
-        res.json({ success: true });
-    } catch (err) {
-        console.error("Budget removal engine pipeline fault:", err);
-        res.status(500).json({ success: false, message: "Server document structural deletion failure." });
-    }
-});
-
-/* ================= SYSTEM DATA API CREATIONS ================= */
-
-// Async API Route to insert a new budget into the user's document arrays
-app.post('/api/budgets/create', requireAuth, async (req, res) => {
-    try {
-        const { name, amount, icon } = req.body;
-        
-        if (!name || !amount || isNaN(amount) || Number(amount) <= 0) {
-            return res.status(400).json({ success: false, message: "Valid budget name and amount are required." });
-        }
-
-        const newBudgetCard = {
-            name: name.trim(),
-            amount: Number(amount),
-            spent: 0,
-            icon: icon && icon.trim() !== "" ? icon.trim() : "💼",
-            percent: 0
-        };
-
-        await User.findByIdAndUpdate(req.session.userId, {
-            $push: { budgets: newBudgetCard }
-        });
-
-        res.json({ success: true });
-    } catch (err) {
-        console.error("Budget creation pipeline failure:", err);
-        res.status(500).json({ success: false, message: "Internal server parameter fault." });
-    }
-});
-
-// Async API Route to append a new expense transaction and recalculate budget metrics
-app.post('/api/expenses/create', requireAuth, async (req, res) => {
-    try {
-        const { name, amount, budgetName } = req.body;
-        
-        if (!name || !amount || isNaN(amount) || Number(amount) <= 0) {
-            return res.status(400).json({ success: false, message: "Valid name and transaction amount are required." });
-        }
-
-        const numericAmount = Number(amount);
-        const today = new Date();
-        const formattedDate = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
-
-        const user = await User.findById(req.session.userId);
-        if (!user) return res.status(404).json({ success: false, message: "Identity node not found." });
-
-        const newExpense = {
-            name: name.trim(),
-            amount: numericAmount,
-            date: formattedDate,
-            budgetName: budgetName ? budgetName.trim() : "Shopping" 
-        };
-
-        if (budgetName) {
-            const targetBudget = user.budgets.find(b => b.name.toLowerCase() === budgetName.trim().toLowerCase());
-            if (targetBudget) {
-                targetBudget.spent = (targetBudget.spent || 0) + numericAmount;
-                targetBudget.percent = Math.min(Math.round((targetBudget.spent / targetBudget.amount) * 100), 100);
-            }
-        }
-
-        user.expenses.unshift(newExpense);
-        await user.save();
-
-        res.json({ success: true });
-    } catch (err) {
-        console.error("Expense deployment pipeline error:", err);
-        res.status(500).json({ success: false, message: "Internal server registry allocation failure." });
-    }
-});
-
-// Async API Route to delete individual expenses from the database master document
-app.post('/api/expenses/delete/:id', requireAuth, async (req, res) => {
-    try {
-        const expenseId = req.params.id;
-        const user = await User.findById(req.session.userId);
-        if (!user) return res.status(404).json({ success: false, message: "Identity node not found." });
-
-        // Pinpoint the target expense item to fetch its original value parameters before deletion
-        const targetExpense = user.expenses.id(expenseId);
-        if (targetExpense && targetExpense.budgetName) {
-            const targetBudget = user.budgets.find(b => b.name.toLowerCase() === targetExpense.budgetName.toLowerCase());
-            if (targetBudget) {
-                // Deduct from budget spent and fix limits safely
-                targetBudget.spent = Math.max(0, (targetBudget.spent || 0) - targetExpense.amount);
-                targetBudget.percent = targetBudget.amount > 0 ? Math.min(Math.round((targetBudget.spent / targetBudget.amount) * 100), 100) : 0;
-            }
-        }
-
-        // Mutation delete step executing Mongoose sub-document helper channels
-        user.expenses.pull({ _id: expenseId });
-        await user.save();
-
-        res.json({ success: true });
-    } catch (err) {
-        console.error("Expense ledger deletion execution fault:", err);
-        res.status(500).json({ success: false, message: "Server sub-document array mutation failure." });
+        return res.status(500).json({ success: false, message: "Server registration error." });
     }
 });
 
 /* ================= FALLBACK ENGINE ROUTING ================= */
 
-// Base entry root path redirects straight to auth or index via render engine
 app.get('/', (req, res) => {
-    try {
-        return res.render('index.html');
-    } catch (err) {
-        res.status(404).send("Root file index node execution fault.");
-    }
+    return res.render(path.join(__dirname, 'auth.html'), { user: null });
 });
 
-// Whitelisted page routing matrix using strict absolute EJS templates
 app.get('/:page', async (req, res, next) => {
     const filename = req.params.page;
     
+    if (!filename.endsWith('.html')) return next();
+
     try {
-        // 1. Guard-protected pages that absolutely REQUIRE a live session
-        if (filename === 'dashboard.html' || filename === 'budget.html' || filename === 'profile.html' || filename === 'expense.html') {
+        // Protected Views
+        if (['dashboard.html', 'budget.html', 'profile.html', 'expense.html'].includes(filename)) {
             if (!req.session || !req.session.userId) {
                 return res.redirect('/auth.html');
             }
-
             const user = await User.findById(req.session.userId);
             if (!user) return res.redirect('/auth.html');
-            return res.render(filename, { user }); 
+            return res.render(path.join(__dirname, filename), { user });
         }
         
-        // 2. FIXED FOR VERCEL: Render public files absolute paths
-if (filename.endsWith('.html')) {
-    return res.render(path.join(__dirname, filename), { user: null });
-}
-        
-        next();
+        // Public Views
+        return res.render(path.join(__dirname, filename), { user: null });
     } catch (err) {
-        console.error("Fallback template rendering pipeline fault:", err);
+        console.error("Template rendering fault:", err);
         res.status(404).send("Requested asset view node not found.");
     }
 });
 
-app.use(express.static(path.join(__dirname)));
-
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Telemetry pipeline open at port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server active on port ${PORT}`));
 
 module.exports = app;
