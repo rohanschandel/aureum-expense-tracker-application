@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AUREUM | Elite Expense Management &amp; Budgeting</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Manrope:wght@200;300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#99907c",
+                        "error": "#ffb4ab",
+                        "secondary-container": "#f1f0eb",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "on-secondary-container": "#3f465c",
+                        "on-primary-fixed": "#241a00",
+                        "on-primary-fixed-variant": "#574400",
+                        "on-tertiary-container": "#6b5500",
+                        "surface-charcoal": "#101415",
+                        "surface-tint": "#D4AF37",
+                        "surface-container-low": "#ffffff",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "primary-fixed": "#ffe08a",
+                        "tertiary-fixed-dim": "#e9c349",
+                        "on-background": "#1c1c1c",
+                        "on-tertiary-fixed": "#241a00",
+                        "surface": "#FCFBF7",
+                        "on-tertiary": "#3c2f00",
+                        "primary-container": "#D4AF37",
+                        "on-secondary": "#283044",
+                        "surface-bright": "#ffffff",
+                        "tertiary-fixed": "#ffe088",
+                        "surface-dim": "#f1f0eb",
+                        "on-surface": "#1c1c1c",
+                        "error-container": "#93000a",
+                        "surface-container": "#f1f0eb",
+                        "outline-gold": "rgba(212, 175, 55, 0.2)",
+                        "outline-variant": "rgba(212, 175, 55, 0.3)",
+                        "gold-bright": "#F2CA50",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#101416",
+                        "on-secondary-fixed": "#131b2e",
+                        "midnight-navy": "#0F172A",
+                        "tertiary-container": "#f1ca50",
+                        "on-surface-variant": "#4a4a4a",
+                        "secondary-fixed": "#dae2fd",
+                        "inverse-primary": "#745b00",
+                        "on-tertiary-fixed-variant": "#574500",
+                        "surface-container-high": "#e8e7e2",
+                        "gold-muted": "#D4AF37",
+                        "background": "#FCFBF7",
+                        "secondary": "#3f465c",
+                        "primary-fixed-dim": "#D4AF37",
+                        "on-primary-container": "#ffffff",
+                        "primary": "#D4AF37",
+                        "tertiary": "#D4AF37",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#f1f0eb",
+                        "on-error-container": "#ffdad6",
+                        "inverse-on-surface": "#ffffff",
+                        "surface-container-highest": "#e1e0db"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "card-padding": "32px",
+                        "section-gap": "80px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Playfair Display"],
+                        "numeric-data": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "display-lg": ["Playfair Display"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "body-lg": ["Manrope"],
+                        "label-md": ["Manrope"],
+                        "headline-lg": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "numeric-data": ["24px", {"lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "300"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #FCFBF7;
+            color: #1c1c1c;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .gold-wire-border {
+            position: relative;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .gold-wire-border:hover {
+            border: 1px solid transparent;
+            background-image: linear-gradient(#ffffff, #ffffff), linear-gradient(to right, #D4AF37, #f2ca50);
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+        }
+        .hero-map-bg {
+            background-image: linear-gradient(rgba(252, 251, 247, 0.9), rgba(252, 251, 247, 0.85)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuAzSmBhrGx40eSZwRRj01Hz0ukISYpEj6LEl-4fbz9FRWl77DHuiyn1nN6fa4UhvcjjV6C-uX7mf2OW3LiX9aayXhXSuMZ4UTz-z04XdOH-0Q27rvcYlm5rQK9R2GCOt7IgGGda7Py3pGoX4LHD2A841iCWAI9AjO-zioX1Hhqm2HaS5BOBFht5x-cvDrs17zdOiJQ5CMaz0rqwvS7JQg3fWVLmJmziQsM16ioO2o6re8VkmfaWbVYiHqHzYWM_iPfDDJwZ3Eplnf8');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .text-gold-gradient {
+    background: linear-gradient(to right, #D4AF37, #b08d26);
+    -webkit-background-clip: text;
+    background-clip: text; /* Standard spec compatibility */
+    -webkit-text-fill-color: transparent;
+    display: inline-block; /* Fixes element collapse bug */
+}
+        .heading-charcoal {
+            color: #2D3436;
+        }
+        .parchment-overlay {
+            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAzSmBhrGx40eSZwRRj01Hz0ukISYpEj6LEl-4fbz9FRWl77DHuiyn1nN6fa4UhvcjjV6C-uX7mf2OW3LiX9aayXhXSuMZ4UTz-z04XdOH-0Q27rvcYlm5rQK9R2GCOt7IgGGda7Py3pGoX4LHD2A841iCWAI9AjO-zioX1Hhqm2HaS5BOBFht5x-cvDrs17zdOiJQ5CMaz0rqwvS7JQg3fWVLmJmziQsM16ioO2o6re8VkmfaWbVYiHqHzYWM_iPfDDJwZ3Eplnf8');
+            background-blend-mode: overlay;
+            background-color: rgba(255, 255, 255, 0.92);
+            background-size: 150% auto;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="font-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-outline-gold">
+<div class="max-w-[1440px] mx-auto px-margin-desktop py-4 flex justify-between items-center">
+<div class="text-headline-md font-headline-md font-bold text-primary tracking-tight">AUREUM</div>
+<div class="hidden md:flex items-center space-x-10">
+<a class="font-body-md text-label-md uppercase tracking-widest text-primary border-b border-primary pb-1" href="#">Portfolio</a>
+<a class="font-body-md text-label-md uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Insights</a>
+<a class="font-body-md text-label-md uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Vault</a>
+<a class="font-body-md text-label-md uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Concierge</a>
+</div>
+<div class="flex items-center space-x-6">
+<button class="font-body-md text-label-md uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Dashboard</button>
+
+                <a href="/auth.html" class="text-xs font-semibold tracking-wider uppercase">GET STARTED</a>
+            
+</div>
+</div>
+</nav>
+<main class="pt-24 overflow-hidden">
+<!-- Hero Section with Vintage Map Background -->
+<section class="hero-map-bg relative">
+<div class="max-w-[1440px] mx-auto px-margin-desktop py-section-gap relative z-10">
+<div class="grid grid-cols-12 gap-gutter items-center">
+<div class="col-span-12 md:col-span-7 space-y-base">
+<span class="text-primary font-label-md uppercase tracking-[0.4em] block mb-4 font-semibold">The Zenith of Capital Oversight</span>
+<h1 class="font-headline-lg text-display-lg leading-tight mb-8 heading-charcoal">
+                    Master Your Capital, <br/>
+<span class="text-gold-gradient italic">Rule Your Legacy</span>
+</h1>
+<p class="font-body-lg text-on-surface-variant max-w-lg mb-12">
+                    Meticulous budget creation and frictionless expense management engineered for the sovereign individual. Gain absolute clarity over every global transaction.
+                </p>
+<div class="flex items-center space-x-6">
+
+<!-- <a class="bg-primary text-white px-10 py-4 font-label-md uppercase tracking-widest hover:brightness-110 hover:shadow-xl transition-all" href="authentication.html">
+                    <span class="text-xs font-semibold tracking-wider uppercase">Begin Tracking</span>
+
+                </a> -->
+                <a href="auth.html" class="cta-btn main-cta" style="text-decoration: none; display: inline-block; text-align: center;">Create Profile</a>
+<button class="border border-primary text-primary px-10 py-4 font-label-md uppercase tracking-widest hover:bg-primary/5 transition-all">Request Invitation</button>
+</div>
+</div>
+<div class="col-span-12 md:col-span-5 relative mt-12 md:mt-0">
+<div class="aspect-[4/5] md:aspect-square gold-wire-border p-3 bg-white shadow-2xl overflow-hidden rounded-sm">
+<img class="w-full h-full object-cover hover:scale-105 transition-transform duration-1000" data-alt="A premium financial interface showing a clean, high-end budgeting dashboard with gold accents. Minimalist charts, transaction lists, and wealth metrics on a sleek tablet resting on a white marble surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqr_jni2bzsoHg92KARRRfyekJmAy5v9rHbtH8306CPE2swCBYQP_NFAnWDejookKLRyr9joAOPHsKqFkv0RhYzTwVFheJQFVImdY9B4-MkUq-pdpHMV5WUA6_fcW8ZrTdbrCKxY4RiRomZIHuKqpQFvHa8t9N3o9SfPij9tR9XApA9hjZ_kb7sQgEnptKqBlrYdHtVZgrHl0EIJGpx-YT2f3-IIML9xcGAjN8zjnfqKwqVxWkbSb88R9fK-Tw8PVFpueVFRhiSBk"/>
+</div>
+<!-- Ambient Accent -->
+<div class="absolute -z-10 -top-10 -right-10 w-64 h-64 bg-primary/10 blur-3xl rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Subtle Bottom Gradient to White -->
+<div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent"></div>
+</section>
+<!-- Features Bento Grid -->
+<section class="max-w-[1440px] mx-auto px-margin-desktop py-section-gap relative">
+<!-- Decorative Map Compass (Conceptualized using SVG/Icon) -->
+<div class="absolute -left-20 top-40 opacity-5 pointer-events-none hidden lg:block">
+<img alt="Decorative element" class="w-96 h-96 object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzSmBhrGx40eSZwRRj01Hz0ukISYpEj6LEl-4fbz9FRWl77DHuiyn1nN6fa4UhvcjjV6C-uX7mf2OW3LiX9aayXhXSuMZ4UTz-z04XdOH-0Q27rvcYlm5rQK9R2GCOt7IgGGda7Py3pGoX4LHD2A841iCWAI9AjO-zioX1Hhqm2HaS5BOBFht5x-cvDrs17zdOiJQ5CMaz0rqwvS7JQg3fWVLmJmziQsM16ioO2o6re8VkmfaWbVYiHqHzYWM_iPfDDJwZ3Eplnf8"/>
+</div>
+<div class="text-center mb-20">
+<h2 class="font-headline-md text-headline-md mb-4 uppercase tracking-widest heading-charcoal">Fiduciary Precision</h2>
+<div class="h-0.5 w-16 bg-primary mx-auto opacity-60"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+<!-- Intelligent Budgeting -->
+<div class="p-card-padding bg-white/80 backdrop-blur-sm gold-wire-border flex flex-col items-start transition-all duration-500 group shadow-sm hover:shadow-xl">
+<div class="mb-10 p-5 bg-primary/5 rounded-full">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4 heading-charcoal">Intelligent Budgeting</h3>
+<p class="font-body-md text-on-surface-variant mb-8 leading-relaxed">
+                    Create custom limits across all spending categories with granular control. Tailor your fiscal boundaries to match your lifestyle ambitions.
+                </p>
+<a class="mt-auto font-label-md uppercase tracking-widest text-primary flex items-center group-hover:translate-x-2 transition-transform font-bold" href="#">
+                    Define Limits <span class="material-symbols-outlined ml-2 scale-75" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<!-- Automated Ledger -->
+<div class="p-card-padding bg-white/80 backdrop-blur-sm gold-wire-border flex flex-col items-start transition-all duration-500 group shadow-sm hover:shadow-xl">
+<div class="mb-10 p-5 bg-primary/5 rounded-full">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="receipt_long">receipt_long</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4 heading-charcoal">Automated Ledger</h3>
+<p class="font-body-md text-on-surface-variant mb-8 leading-relaxed">
+                    Seamlessly track every transaction with real-time AI categorization. From private aviation to art acquisitions, every cent is accounted for.
+                </p>
+<a class="mt-auto font-label-md uppercase tracking-widest text-primary flex items-center group-hover:translate-x-2 transition-transform font-bold" href="#">
+                    Review Transactions <span class="material-symbols-outlined ml-2 scale-75" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<!-- Fiscal Projections -->
+<div class="p-card-padding bg-white/80 backdrop-blur-sm gold-wire-border flex flex-col items-start transition-all duration-500 group shadow-sm hover:shadow-xl">
+<div class="mb-10 p-5 bg-primary/5 rounded-full">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="insights">insights</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4 heading-charcoal">Fiscal Projections</h3>
+<p class="font-body-md text-on-surface-variant mb-8 leading-relaxed">
+                    Advanced analytics to predict future spending patterns. Visualize your wealth's trajectory with probabilistic modeling and trend analysis.
+                </p>
+<a class="mt-auto font-label-md uppercase tracking-widest text-primary flex items-center group-hover:translate-x-2 transition-transform font-bold" href="#">
+                    Forecast Future <span class="material-symbols-outlined ml-2 scale-75" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Prestige Section with Map Detail -->
+<section class="bg-white py-32 relative overflow-hidden border-y border-outline-gold/30 parchment-overlay">
+<div class="max-w-4xl mx-auto px-margin-desktop text-center relative z-10">
+<span class="material-symbols-outlined text-primary text-6xl mb-10 opacity-30" data-icon="format_quote">format_quote</span>
+<p class="font-headline-lg italic heading-charcoal leading-relaxed mb-12 text-3xl md:text-4xl">
+                "Aureum has redefined how I perceive my financial footprint. It is no longer just a ledger; it is a meticulously curated gallery of my life's achievements."
+            </p>
+<div class="space-y-3">
+<div class="text-primary font-label-md uppercase tracking-[0.3em] font-bold">Julian V. Sterling</div>
+<div class="text-on-surface-variant font-body-md text-label-md opacity-70">Global Wealth Custodian</div>
+</div>
+</div>
+</section>
+<!-- CTA Section with Global Map Detail -->
+<section class="max-w-[1440px] mx-auto px-margin-desktop py-section-gap">
+<div class="bg-white p-16 md:p-24 gold-wire-border text-center overflow-hidden relative shadow-2xl">
+<!-- Detailed map crop for CTA background -->
+<div class="absolute inset-0 -z-10 opacity-[0.07] scale-150 rotate-12">
+<img alt="" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzSmBhrGx40eSZwRRj01Hz0ukISYpEj6LEl-4fbz9FRWl77DHuiyn1nN6fa4UhvcjjV6C-uX7mf2OW3LiX9aayXhXSuMZ4UTz-z04XdOH-0Q27rvcYlm5rQK9R2GCOt7IgGGda7Py3pGoX4LHD2A841iCWAI9AjO-zioX1Hhqm2HaS5BOBFht5x-cvDrs17zdOiJQ5CMaz0rqwvS7JQg3fWVLmJmziQsM16ioO2o6re8VkmfaWbVYiHqHzYWM_iPfDDJwZ3Eplnf8"/>
+</div>
+<div class="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_70%)]"></div>
+<h2 class="font-headline-lg text-display-lg mb-8 heading-charcoal">Start Your Ledger</h2>
+<p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto mb-14 leading-relaxed">
+                Join an exclusive network of high-net-worth individuals who demand perfection in financial stewardship. Your automated accounting ecosystem is waiting.
+            </p>
+
+<a class="bg-primary text-white font-label-md uppercase tracking-[0.3em] px-20 py-6 hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_20px_50px_rgba(212,175,55,0.2)]" href="authentication.html">
+                    <span class="text-xs font-semibold tracking-wider uppercase">Start Your Ledger</span>
+                </a>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full px-margin-desktop py-20 flex flex-col md:flex-row justify-between items-center bg-white border-t border-outline-gold/30">
+<div class="flex flex-col items-center md:items-start mb-10 md:mb-0">
+<div class="text-headline-md font-headline-md text-primary mb-4 tracking-tight">AUREUM</div>
+<p class="text-label-md font-body-md text-on-surface-variant uppercase tracking-widest text-[10px]">© 2024 AUREUM PRIVATE VAULT. ALL RIGHTS RESERVED.</p>
+</div>
+<div class="flex space-x-10">
+<a class="font-body-md text-label-md text-on-surface-variant hover:text-primary transition-colors uppercase tracking-widest text-xs" href="#">Privacy</a>
+<a class="font-body-md text-label-md text-on-surface-variant hover:text-primary transition-colors uppercase tracking-widest text-xs" href="#">Terms</a>
+<a class="font-body-md text-label-md text-on-surface-variant hover:text-primary transition-colors uppercase tracking-widest text-xs" href="#">Security</a>
+<a class="font-body-md text-label-md text-on-surface-variant hover:text-primary transition-colors uppercase tracking-widest text-xs" href="#">Support</a>
+</div>
+</footer>
+<script>
+    // Micro-interaction for gold-wire-border cards
+    document.querySelectorAll('.gold-wire-border').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
+
+    // Smooth scroll reveal observer
+    const observerOptions = {
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('opacity-100', 'translate-y-0');
+                entry.target.classList.remove('opacity-0', 'translate-y-10');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('section').forEach(section => {
+        section.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10');
+        observer.observe(section);
+    });
+</script>
+</body></html>

@@ -1,0 +1,26 @@
+/* Custom font properties alignment matrix */
+.font-display {
+    font-family: 'Playfair Display', serif;
+}
+
+/* Atmospheric visuals background gradient map filter */
+.parchment-overlay {
+    background: linear-gradient(to right, rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.8));
+}
+
+.letter-spacing-custom {
+    letter-spacing: 0.15em;
+}
+
+/* Dynamic hardware acceleration view crossfade variables */
+.fade-transition {
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    will-change: transform, opacity;
+}
+
+#cursor-glow {
+    background: radial-gradient(circle, rgba(242, 202, 80, 0.3) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+}

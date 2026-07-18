@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Aureum | User Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        :root {
+            --primary: #0052FF;
+            --background: #07080c;
+            --surface: #0b0d16;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+        }
+        .font-display {
+            font-family: 'Montserrat', sans-serif;
+        }
+        select {
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            padding-right: 2rem;
+            appearance: none;
+        }
+    </style>
+</head>
+<body class="text-slate-200 overflow-x-hidden">
+
+    <div class="flex flex-col md:flex-row min-h-screen w-screen relative z-10">
+        
+        <!-- Sidebar Shell Blueprint -->
+        <aside class="w-full h-auto md:w-64 md:h-screen relative md:fixed left-0 top-0 border-b md:border-b-0 md:border-r border-white/5 backdrop-blur-xl bg-opacity-80 flex flex-col p-5 md:p-6 gap-6 md:gap-8 z-50 bg-[#0b0d16] shrink-0">
+            <div class="flex items-center gap-3">
+                <a href="/dashboard.html" class="hover:text-[#0052FF] transition-colors flex items-center">
+                    <span class="material-symbols-outlined text-xl">arrow_back</span>
+                </a>
+                <h1 class="font-display font-bold text-xl tracking-tight text-[#0052FF]">Aureum<span class="text-white">Profile</span></h1>
+            </div>
+            <nav class="hidden md:flex flex-col flex-grow"></nav>
+        </aside>
+
+        <!-- Main Account Custom Data Canvas Viewport -->
+        <main class="flex-grow flex flex-col ml-0 md:ml-64 min-h-screen w-full bg-[#07080c] relative p-4 md:p-10 items-center justify-center">
+            
+            <form id="profile-form" class="w-full max-w-2xl bg-[#0b0d16] border border-white/5 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+                
+                <!-- Account Display Identity Layout Segment -->
+                <div class="flex flex-col sm:flex-row items-center gap-6 border-b border-white/5 pb-6 mb-6">
+                    <div class="relative shrink-0">
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-[#0052FF] to-purple-600 p-0.5 shadow-xl relative overflow-hidden">
+                            <!-- Direct Dynamic Server Value Integration -->
+                            <div class="w-full h-full bg-[#07080c] rounded-full flex items-center justify-center text-white font-bold font-display text-3xl" id="profile-big-avatar">
+                                <%= user.avatarLetter %>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-1 right-1 bg-[#002687] text-white rounded-full p-1 border-2 border-[#0b0d16] shadow-md flex items-center justify-center pointer-events-none z-10">
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+                        </div>
+                    </div>
+
+                    <div class="text-center sm:text-left flex-grow">
+                        <!-- Pulls dynamic account title configuration directly out of MongoDB -->
+                        <h2 class="font-display font-bold text-2xl text-white tracking-tight mb-1" id="profile-display-name"><%= user.name %></h2>
+                    </div>
+                </div>
+
+                <!-- Fields Configuration Array Matrix -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Account Parameters</h3>
+                        <span id="save-status" class="text-xs text-emerald-400 font-medium hidden flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">check_circle</span> Changes Saved
+                        </span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 px-4 rounded-xl bg-white/[0.01] border border-white/5 focus-within:border-blue-500/5 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-slate-400">person</span>
+                            <span class="text-sm font-medium text-slate-300">Display Username Name</span>
+                        </div>
+                        <input type="text" id="profile-username" name="name" class="text-sm text-right bg-transparent text-white font-semibold outline-none border-none focus:text-blue-400 max-w-[180px]" value="<%= user.name %>" required/>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 px-4 rounded-xl bg-white/[0.01] border border-white/5 opacity-60">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-slate-400">mail</span>
+                            <span class="text-sm font-medium text-slate-300">Secure Node Router (Email)</span>
+                        </div>
+                        <input type="email" readonly class="text-sm text-right bg-transparent text-slate-400 font-semibold cursor-not-allowed border-none outline-none max-w-[220px]" value="<%= user.email %>"/>
+                    </div>
+                </div>
+
+                <!-- Interactive Workflow Action Control Buttons -->
+                <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                    <button type="submit" class="w-full py-3.5 bg-[#0052FF] text-white font-semibold rounded-xl shadow-[0_0_20px_rgba(0,82,255,0.2)] hover:bg-blue-600 active:scale-[0.99] transition-all duration-300 text-sm flex items-center justify-center gap-2 cursor-pointer">
+                        <span class="material-symbols-outlined text-lg">save</span>
+                        <span>Save Vault Signature</span>
+                    </button>
+                    <a href="/dashboard.html" class="w-full py-3.5 bg-white/5 border border-white/10 text-white text-center font-semibold rounded-xl hover:bg-white/10 active:scale-[0.99] transition-all duration-300 text-sm flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-lg">dashboard</span>
+                        <span>Return to Main Grid</span>
+                    </a>
+                </div>
+
+            </form>
+        </main>
+    </div>
+
+    <!-- Live Client API Processing Layer -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const profileForm = document.getElementById('profile-form');
+            const saveStatus = document.getElementById('save-status');
+            const displayName = document.getElementById('profile-display-name');
+            const bigAvatarPlaceholder = document.getElementById('profile-big-avatar');
+            const usernameInput = document.getElementById('profile-username');
+
+            if (profileForm) {
+                profileForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const payload = {
+                        name: usernameInput.value.trim()
+                    };
+
+                    try {
+                        const response = await fetch('/api/profile/update', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const result = await response.json();
+                        if (result.success) {
+                            if (displayName) displayName.textContent = payload.name;
+                            if (bigAvatarPlaceholder) bigAvatarPlaceholder.textContent = payload.name.charAt(0).toUpperCase();
+                            
+                            if (saveStatus) {
+                                saveStatus.classList.remove('hidden');
+                                setTimeout(() => saveStatus.classList.add('hidden'), 2500);
+                            }
+                        } else {
+                            alert('Operation rejected by remote engine arrays.');
+                        }
+                    } catch (err) {
+                        alert('Communication network fault occurred.');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

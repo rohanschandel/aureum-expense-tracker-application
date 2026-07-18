@@ -1,0 +1,27 @@
+.font-display {
+    font-family: 'Playfair Display', serif;
+}
+
+/* Custom premium border configuration tracking shadows */
+.gold-wire-border {
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gold-wire-border:hover {
+    border-color: #D4AF37;
+    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.06);
+}
+
+/* Custom Workspace UI Scrollbar Parameter Configurations */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #E2E8F0;
+    border-radius: 99px;
+}

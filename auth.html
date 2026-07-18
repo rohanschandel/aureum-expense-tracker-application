@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUREUM | Secure Authentication Portal</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body class="bg-white text-aureum-navy h-screen min-h-screen overflow-hidden select-none">
+
+    <main class="w-full h-full flex flex-col lg:flex-row relative">
+
+        <!-- LEFT SIDE: Preview Section Panel with Background Image -->
+        <section class="hidden lg:flex lg:w-7/12 h-full relative overflow-hidden order-1 lg:order-2 bg-cover bg-center" style="background-image: url('authhtmlimg.jpg');">
+            <!-- Dark Overlay tint matrix to make sure the white text stands out cleanly -->
+            <div class="absolute inset-0 bg-slate-900/75 z-10"></div>
+            
+            <!-- Structural Decorative Grid Gradients Layer -->
+            <div class="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px] opacity-10 z-10"></div>
+
+            <div class="relative h-full w-full flex flex-col justify-end p-16 z-20">
+                <div class="max-w-xl">
+                    <div class="h-[2px] w-20 bg-aureum-gold-bright mb-6"></div>
+                    <h2 class="font-display text-5xl text-white leading-tight mb-4">
+                        Start Your <br>
+                        <span class="text-aureum-gold-bright italic">Global Legacy</span>
+                    </h2>
+                    <p class="text-slate-300 font-light text-sm leading-relaxed max-w-md">
+                        Navigate the complexities of international asset tracking with precision framework architecture. Your sovereign capital balance, secured elegantly.
+                    </p>
+                </div>
+                <div class="absolute top-16 right-16 text-right opacity-40">
+                    <p class="font-mono text-xs text-aureum-gold-bright tracking-[0.25em]">40.7128° N, 74.0060° W</p>
+                    <p class="text-[10px] text-white tracking-widest mt-1 uppercase">ESTABLISHED 1924</p>
+                </div>
+            </div>
+            <div id="cursor-glow" class="absolute pointer-events-none w-[500px] h-[500px] rounded-full opacity-20 blur-[100px] bg-white z-10"></div>
+        </section>
+
+        <!-- RIGHT SIDE: Identity Gateway Interaction Panels Form -->
+        <section class="w-full lg:w-5/12 h-full bg-white text-aureum-navy flex flex-col justify-between p-12 relative z-10 order-2 lg:order-1 border-r border-slate-100">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-aureum-gold text-3xl font-light">account_balance</span>
+                <span class="font-display font-bold text-xl tracking-[0.2em] text-aureum-navy">AUREUM</span>
+            </div>
+
+            <div class="w-full max-w-md mx-auto my-auto relative">
+                
+                <!-- Sign In Module Box UI -->
+                <div id="signin-block" class="fade-transition opacity-100 scale-100 block">
+                    <div class="mb-6">
+                        <h3 class="font-display text-3xl text-aureum-navy font-semibold mb-1">Sign in</h3>
+                        <p class="text-sm text-on-surface-variant font-light">Welcome back to The Royal Ledger asset terminal.</p>
+                    </div>
+
+                    <form class="space-y-4" id="login-form">
+                        <div>
+                            <label class="block text-xs uppercase tracking-[0.15em] font-semibold text-on-surface-variant mb-2">Email Address</label>
+                            <input class="w-full bg-[#EBF2FE] border border-transparent rounded-lg px-4 py-3 text-sm font-medium outline-none placeholder:text-slate-400 focus:ring-1 focus:ring-aureum-gold focus:border-aureum-gold transition-all" name="email" placeholder="rohanschandel@gmail.com" type="email" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-[0.15em] font-semibold text-on-surface-variant mb-2">Keyphrase Code</label>
+                            <input class="w-full bg-[#EBF2FE] border border-transparent rounded-lg px-4 py-3 text-sm font-medium outline-none placeholder:text-slate-400 focus:ring-1 focus:ring-aureum-gold focus:border-aureum-gold transition-all" name="password" placeholder="••••••••••••" type="password" required>
+                        </div>
+                        <button class="w-full bg-aureum-gold-bright text-aureum-navy font-bold text-xs py-4 rounded-lg hover:brightness-105 active:scale-[0.99] transition-all duration-200 letter-spacing-custom uppercase tracking-widest" type="submit">
+                            Initialize Session
+                        </button>
+                    </form>
+                    <p class="mt-8 text-center text-sm text-on-surface-variant font-light">
+                        No account? <span id="to-signup-trigger" class="text-aureum-gold font-semibold hover:text-aureum-gold-bright transition-colors cursor-pointer underline underline-offset-4 ml-1">Sign up</span>
+                    </p>
+                </div>
+
+                <!-- Sign Up Module Box UI -->
+                <div id="signup-block" class="fade-transition opacity-0 scale-95 hidden">
+                    <div class="mb-5">
+                        <h3 class="font-display text-3xl text-aureum-navy font-semibold mb-1">Sign up</h3>
+                        <p class="text-sm text-on-surface-variant font-light">Begin your journey toward institutional-grade wealth tracking.</p>
+                    </div>
+
+                    <form class="space-y-4" id="signup-form">
+                        <div>
+                            <label class="block text-xs uppercase tracking-[0.15em] font-semibold text-on-surface-variant mb-1.5">Account Title Name</label>
+                            <input class="w-full bg-[#EBF2FE] border border-transparent rounded-lg px-4 py-2.5 text-sm font-medium outline-none placeholder:text-slate-400 focus:ring-1 focus:ring-aureum-gold focus:border-aureum-gold transition-all" name="name" placeholder="Alexander Sterling" type="text" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-[0.15em] font-semibold text-on-surface-variant mb-1.5">Secure Router Node</label>
+                            <input class="w-full bg-[#EBF2FE] border border-transparent rounded-lg px-4 py-2.5 text-sm font-medium outline-none placeholder:text-slate-400 focus:ring-1 focus:ring-aureum-gold focus:border-aureum-gold transition-all" name="email" placeholder="client@sovereign.aureum" type="email" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-[0.15em] font-semibold text-on-surface-variant mb-1.5">Master Security Keyphrase</label>
+                            <input class="w-full bg-[#EBF2FE] border border-transparent rounded-lg px-4 py-2.5 text-sm font-medium outline-none placeholder:text-slate-400 focus:ring-1 focus:ring-aureum-gold focus:border-aureum-gold transition-all" name="password" placeholder="Create robust ledger key" type="password" required>
+                        </div>
+                        <button class="w-full bg-aureum-gold-bright text-aureum-navy font-bold text-xs py-4 rounded-lg hover:brightness-105 active:scale-[0.99] transition-all duration-200 letter-spacing-custom uppercase tracking-widest mt-1" type="submit">
+                            Create Account
+                        </button>
+                    </form>
+                    <p class="mt-6 text-center text-sm text-on-surface-variant font-light">
+                        Already a member? <span id="to-signin-trigger" class="text-aureum-navy font-bold hover:text-aureum-gold transition-colors cursor-pointer underline underline-offset-4 ml-1">Sign in</span>
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="flex justify-between items-center text-[11px] text-on-surface-variant opacity-60 w-full pt-4">
+                <p>© 2026 Aureum Sovereign Wealth.</p>
+                <div class="flex gap-3">
+                    <span class="material-symbols-outlined text-[16px]">security</span>
+                    <span class="material-symbols-outlined text-[16px]">verified_user</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="auth.js"></script>
+</body>
+</html>

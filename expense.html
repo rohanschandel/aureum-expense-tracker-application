@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>AUREUM | Private Expenses Vault</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#ffffff",
+                        "surface-bright": "#ffffff",
+                        "primary": "#D4AF37",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "gold-bright": "#F2CA50",
+                        "surface-dim": "#f0efeb",
+                        "primary-fixed-dim": "#D4AF37",
+                        "inverse-primary": "#745b00",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-container": "#f1ca50",
+                        "on-tertiary": "#3c2f00",
+                        "on-primary-fixed-variant": "#574400",
+                        "inverse-on-surface": "#F8F7F4",
+                        "primary-fixed": "#D4AF37",
+                        "outline-variant": "#E5E1DA",
+                        "error": "#B3261E",
+                        "surface-container-high": "#F8F7F4",
+                        "on-surface": "#0F172A",
+                        "secondary-container": "#3f465c",
+                        "on-primary-container": "#D4AF37",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "background": "#F8F7F4",
+                        "on-tertiary-fixed-variant": "#574500",
+                        "on-secondary-container": "#adb4ce",
+                        "on-secondary": "#283044",
+                        "on-primary-fixed": "#241a00",
+                        "on-background": "#0F172A",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#64748B",
+                        "on-tertiary-container": "#6b5500",
+                        "inverse-surface": "#0F172A",
+                        "tertiary-fixed": "#ffe088",
+                        "secondary": "#3f465c",
+                        "surface-container": "#ffffff",
+                        "tertiary-fixed-dim": "#e9c349",
+                        "surface-tint": "#D4AF37",
+                        "on-secondary-fixed": "#131b2e",
+                        "surface-variant": "#F1F5F9",
+                        "midnight-navy": "#0F172A",
+                        "surface-charcoal": "#1e293b",
+                        "secondary-fixed": "#dae2fd",
+                        "gold-muted": "#D4AF37",
+                        "surface-container-highest": "#F8F7F4",
+                        "on-tertiary-fixed": "#241a00",
+                        "tertiary": "#ffe8ae",
+                        "surface": "#ffffff",
+                        "error-container": "#F9DEDC",
+                        "outline-gold": "rgba(212, 175, 55, 0.2)",
+                        "outline": "#CBD5E1",
+                        "primary-container": "#D4AF37",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "60px",
+                        "base": "6px",
+                        "gutter": "20px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "card-padding": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "label-md": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "numeric-data": ["Manrope"],
+                        "headline-lg": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "display-lg": ["56px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["13px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["15px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["17px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "numeric-data": ["22px", {"lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "300"}],
+                        "headline-lg": ["42px", {"lineHeight": "1.2", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F8F7F4;
+            color: #0F172A;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .gold-wire {
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            transition: border-color 0.4s ease;
+        }
+
+        .gold-wire:hover {
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stagger-item {
+            opacity: 0;
+        }
+
+        .stagger-1 { animation: fadeInUp 0.6s 0.08s forwards; }
+        .stagger-2 { animation: fadeInUp 0.6s 0.15s forwards; }
+
+        .gold-glow:hover {
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.15);
+        }
+
+        /* Custom premium condensed scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.02);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 99px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.6);
+        }
+    </style>
+</head>
+<body class="font-body-md selection:bg-primary selection:text-white overflow-hidden h-screen text-sm">
+
+        <!-- Main Content Area Frame (Optimized Viewport Densities) -->
+        <main class="flex-1 bg-background p-8 h-[calc(100vh-56px)] overflow-hidden">
+            <div class="max-w-6xl mx-auto space-y-4 h-full flex flex-col justify-start fade-in-up">
+                
+                <!-- Header Section Container -->
+                <div class="flex flex-col md:flex-row justify-between items-end gap-4 flex-shrink-0">
+                    <div class="space-y-1">
+                        <h1 class="text-5xl font-bold font-headline-lg text-midnight-navy">My Expenses</h1>
+                        <p class="text-on-surface-variant text-xs flex items-center gap-2">
+                            Expense Outflow 
+                        </p>
+                    </div>
+                    <button onclick="window.location.href='/budget.html'" class="bg-primary text-white px-6 py-2.5 text-xs uppercase tracking-widest gold-glow flex items-center gap-2 transition-all duration-300 active:scale-95 group cursor-pointer">
+                        <span class="material-symbols-outlined text-sm group-hover:rotate-90 transition-transform">add</span>
+                        Add New Expense
+                    </button>
+                </div>
+
+                <!-- Filters and Search Configuration -->
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between flex-shrink-0 stagger-item stagger-1">
+                    <div class="relative w-full md:w-80">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant/50">search</span>
+                        <input class="w-full bg-white border border-outline-variant focus:border-primary px-10 py-2 text-xs text-on-surface transition-all outline-none" placeholder="Search transactions..." type="text"/>
+                    </div>
+                    <div class="flex gap-3 w-full md:w-auto">
+                        <button class="flex items-center gap-1.5 px-3 py-2 bg-white border border-outline-variant text-xs text-on-surface-variant hover:text-primary hover:border-primary transition-all cursor-pointer">
+                            <span class="material-symbols-outlined text-sm">calendar_today</span>
+                            <span class="font-semibold uppercase tracking-tighter">Date Range</span>
+                        </button>
+                        <button class="flex items-center gap-1.5 px-3 py-2 bg-white border border-outline-variant text-xs text-on-surface-variant hover:text-primary hover:border-primary transition-all cursor-pointer">
+                            <span class="material-symbols-outlined text-sm">filter_list</span>
+                            <span class="font-semibold uppercase tracking-tighter">Category</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Expenses Table Segment (Dynamic Database Grid) -->
+                <div class="bg-white gold-wire overflow-hidden flex-1 max-h-[calc(100vh-240px)] shadow-sm flex flex-col stagger-item stagger-2">
+                    <div class="overflow-y-auto flex-1 custom-scrollbar">
+                        <table class="w-full text-left border-collapse relative">
+                            <!-- Sticky Table Header -->
+                            <thead class="sticky top-0 z-10 bg-white">
+                                <tr class="bg-slate-50 text-on-surface-variant text-[10px] font-bold uppercase tracking-widest border-b border-outline-variant/30">
+                                    <th class="px-6 py-3.5">Name</th>
+                                    <th class="px-6 py-3.5">Category</th>
+                                    <th class="px-6 py-3.5">Date</th>
+                                    <th class="px-6 py-3.5 text-right">Amount</th>
+                                    <th class="px-6 py-3.5 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-outline-variant/20 text-xs">
+                                <% if (user.expenses && user.expenses.length > 0) { %>
+                                    <% user.expenses.forEach(function(expense) { %>
+                                        <tr class="hover:bg-slate-50/80 transition-colors group">
+                                            <td class="px-6 py-3.5 font-semibold text-midnight-navy"><%= expense.name %></td>
+                                            <td class="px-6 py-3.5">
+                                                <span class="px-2 py-0.5 bg-slate-100 text-on-surface-variant text-[9px] uppercase tracking-widest border border-slate-200">
+                                                    <%= expense.budgetName || 'Unassigned' %>
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-3.5 text-on-surface-variant"><%= expense.date %></td>
+                                            <td class="px-6 py-3.5 text-right font-mono text-primary font-medium">
+                                                $<%= expense.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
+                                            </td>
+                                            <td class="px-6 py-3.5 text-center">
+                                                <button onclick="deleteExpenseEntry('<%= expense._id %>')" class="text-on-surface-variant hover:text-error transition-colors cursor-pointer outline-none">
+                                                    <span class="material-symbols-outlined text-sm">delete</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" class="text-center py-12 text-slate-400 font-medium bg-white">
+                                            No operational expense transaction logs found in database.
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Layout Base System Footer -->
+    <footer class="fixed bottom-0 left-0 right-0 h-10 bg-white border-t border-outline-variant flex justify-between items-center px-margin-desktop z-50 text-[11px]">
+        <span class="text-on-surface-variant opacity-80">© 2026 AUREUM PRIVATE VAULT. ALL RIGHTS RESERVED.</span>
+        <div class="flex gap-6">
+            <a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+            <a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Security</a>
+        </div>
+    </footer>
+
+    <!-- Script Animation Configuration -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const rowElements = document.querySelectorAll('.stagger-item');
+            rowElements.forEach((item, index) => {
+                item.style.animationDelay = `${(index + 1) * 0.05}s`;
+                item.classList.add('fade-in-up');
+            });
+
+            const interactiveButtons = document.querySelectorAll('button');
+            interactiveButtons.forEach(buttonElement => {
+                buttonElement.addEventListener('mousedown', () => buttonElement.style.transform = 'scale(0.97)');
+                buttonElement.addEventListener('mouseup', () => buttonElement.style.transform = 'scale(1)');
+                buttonElement.addEventListener('mouseleave', () => buttonElement.style.transform = 'scale(1)');
+            });
+        });
+
+        // Async Deletion Execution Pipeline
+        async function deleteExpenseEntry(expenseIdValue) {
+            if (!confirm("Permanently sign off and destroy this expense data record?")) return;
+            
+            try {
+                const response = await fetch(`/api/expenses/delete/${expenseIdValue}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    window.location.reload(); 
+                } else {
+                    alert("Database controller pipeline refused the ledger mutation statement.");
+                }
+            } catch (err) {
+                alert("Loss of synchronization loop status with core server.");
+            }
+        }
+    </script>
+</body>
+</html>

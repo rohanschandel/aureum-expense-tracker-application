@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>AUREUM | My Budgets</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@300;400;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#dae2fd",
+                        "on-error": "#690005",
+                        "on-surface-variant": "#475569", 
+                        "on-secondary-container": "#1e293b",
+                        "midnight-navy": "#0F172A",
+                        "on-primary-fixed-variant": "#574400",
+                        "tertiary-fixed": "#ffe088",
+                        "surface-container-highest": "#f1f5f9",
+                        "primary": "#D4AF37", 
+                        "surface-bright": "#ffffff",
+                        "on-tertiary": "#3c2f00",
+                        "secondary": "#64748b",
+                        "on-primary-fixed": "#241a00",
+                        "on-primary": "#ffffff",
+                        "error": "#b91c1c",
+                        "surface-container": "#ffffff",
+                        "surface-charcoal": "#101415",
+                        "on-background": "#0F172A", 
+                        "on-primary-container": "#453300",
+                        "inverse-surface": "#101416",
+                        "tertiary-container": "#D4AF37",
+                        "outline-variant": "#e2e8f0",
+                        "inverse-on-surface": "#ffffff",
+                        "surface": "#F8F7F4", 
+                        "tertiary-fixed-dim": "#e9c349",
+                        "surface-dim": "#f1f5f9",
+                        "surface-container-high": "#ffffff",
+                        "outline-gold": "rgba(212, 175, 55, 0.2)",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#574500",
+                        "on-error-container": "#fecaca",
+                        "on-tertiary-container": "#453300",
+                        "on-secondary-fixed": "#0f172a",
+                        "secondary-fixed-dim": "#94a3b8",
+                        "on-surface": "#0F172A", 
+                        "surface-tint": "#D4AF37",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#334155",
+                        "primary-fixed-dim": "#eac249",
+                        "secondary-container": "#f1f5f9",
+                        "outline": "#cbd5e1",
+                        "on-tertiary-fixed": "#241a00",
+                        "gold-muted": "#D4AF37",
+                        "primary-container": "#D4AF37",
+                        "gold-bright": "#D4AF37",
+                        "inverse-primary": "#D4AF37",
+                        "primary-fixed": "#D4AF37",
+                        "background": "#F8F7F4", 
+                        "surface-variant": "#f8fafc",
+                        "surface-container-low": "#ffffff",
+                        "error-container": "#fee2e2",
+                        "tertiary": "#D4AF37"
+                    },
+                    "spacing": {
+                        "section-gap": "80px",
+                        "margin-desktop": "64px",
+                        "card-padding": "32px",
+                        "gutter": "22px",
+                        "base": "8px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "numeric-data": ["Manrope"],
+                        "headline-md": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "body-lg": ["Manrope"],
+                        "display-lg": ["Playfair Display"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "body-md": ["Manrope"],
+                        "label-md": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "numeric-data": ["22px", {"lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "300"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F8F7F4;
+            color: #0F172A;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .gold-wire-border {
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+        }
+        .gold-wire-border:hover {
+            border-color: #D4AF37;
+            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.08);
+            transform: translateY(-2px);
+        }
+        .progress-glow {
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+        }
+        .premium-blur {
+            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface overflow-hidden">
+
+    <main class="w-full h-screen overflow-hidden flex">
+        <section class="flex-1 bg-surface p-margin-desktop overflow-y-auto custom-scrollbar h-full">
+            <div class="max-w-6xl mx-auto">
+                
+                <!-- LIST COMPONENT SYSTEM CONTAINER VIEW -->
+                <div id="budget-list-view" class="block space-y-8">
+                    <div class="flex justify-between items-end mb-12">
+                        <div>
+                            <h1 class="font-headline-lg text-headline-lg text-midnight-navy">My Budgets</h1>
+                            <p class="text-on-surface-variant mt-2 font-body-md">Precision management of your sovereign assets.</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <button class="bg-white border border-outline-variant p-2 hover:border-primary hover:text-primary transition-colors shadow-sm flex items-center justify-center">
+                                <span class="material-symbols-outlined">filter_list</span>
+                            </button>
+                            <button onclick="window.location.href='/dashboard.html'" class="bg-white border border-outline-variant px-4 py-2 hover:border-primary hover:text-primary transition-colors shadow-sm text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">dashboard</span> Dashboard
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+                        <!-- Interactive Dotted Creation Trigger Card Node -->
+                        <div id="open-budget-modal-btn" class="border-2 border-dashed border-slate-300 rounded-2xl p-8 flex flex-col items-center justify-center min-h-[220px] cursor-pointer hover:border-[#D4AF37] transition-all bg-white group select-none">
+                            <div class="w-14 h-14 rounded-full border border-slate-200 flex items-center justify-center bg-slate-50 group-hover:bg-amber-50 group-hover:border-[#D4AF37]/30 transition-colors mb-4">
+                                <span class="material-symbols-outlined text-slate-400 group-hover:text-[#D4AF37] transition-colors text-2xl">add</span>
+                            </div>
+                            <span class="font-display text-xl font-medium text-slate-700 group-hover:text-slate-900 transition-colors">Create New Budget</span>
+                        </div>
+
+                        <!-- Real Database Driven EJS Array Mapping Array Iterator Loop -->
+                        <% if (user.budgets && user.budgets.length > 0) { %>
+                            <% user.budgets.forEach(function(budget, index) { %>
+                                <div class="budget-item-card gold-wire-border bg-white p-card-padding flex flex-col h-64 relative group overflow-hidden cursor-pointer" 
+                                     data-name="<%= budget.name %>"
+                                     data-amount="<%= budget.amount %>"
+                                     data-spent="<%= budget.spent || 0 %>"
+                                     data-icon="<%= budget.icon || '💼' %>"
+                                     data-percent="<%= budget.percent || 0 %>">
+                                    <div class="flex justify-between items-start mb-6">
+                                        <div class="flex gap-4 items-center">
+                                            <div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-xl"><%= budget.icon || '💼' %></div>
+                                            <div>
+                                                <h3 class="font-headline-md text-[20px] text-midnight-navy"><%= budget.name %></h3>
+                                                <p class="text-label-md text-on-surface-variant">Active Target Limit</p>
+                                            </div>
+                                        </div>
+                                        <span class="font-numeric-data text-numeric-data text-primary">$<%= budget.amount.toLocaleString() %></span>
+                                    </div>
+                                    <div class="mt-auto space-y-4">
+                                        <div class="flex justify-between text-label-md">
+                                            <span class="text-on-surface-variant uppercase tracking-widest">$<%= (budget.spent || 0).toLocaleString() %> Spend</span>
+                                            <span class="text-midnight-navy uppercase tracking-widest font-bold">$<%= (budget.amount - (budget.spent || 0)).toLocaleString() %> Left</span>
+                                        </div>
+                                        <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                            <div class="h-full bg-primary progress-glow dynamic-card-progress" 
+                                                 data-width="<%= budget.percent || 0 %>" 
+                                                 style="width: 0%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } %>
+                    </div>
+                </div> 
+
+                <!-- EXPENSE/BUDGET INTERACTION DRILL-DOWN VIEWER -->
+                <div id="budget-detail-view" class="space-y-8 hidden">
+                    <div class="flex justify-between items-center border-b border-outline-variant/30 pb-4">
+                        <button id="back-to-list-btn" class="flex items-center gap-2 text-midnight-navy hover:text-primary font-bold transition-colors text-xl outline-none cursor-pointer">
+                            <span class="material-symbols-outlined font-bold">arrow_back</span> Return to Budgets Grid
+                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="openEditBudgetModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-2 flex items-center gap-1.5 rounded shadow-sm cursor-pointer transition-all">
+                                <span class="material-symbols-outlined text-sm">edit</span> Edit Budget
+                            </button>
+                            <button onclick="triggerBudgetDeletion()" class="bg-red-500 hover:bg-red-600 text-white font-semibold text-xs px-4 py-2 flex items-center gap-1.5 rounded shadow-sm cursor-pointer transition-all">
+                                <span class="material-symbols-outlined text-sm">delete</span> Delete Budget
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                        <div class="bg-white border border-slate-100 rounded-xl p-8 shadow-sm flex flex-col justify-between h-48">
+                            <div class="flex justify-between items-start">
+                                <div class="flex gap-4 items-center">
+                                    <div id="detail-icon" class="w-14 h-14 rounded-full bg-slate-50 flex items-center justify-center text-2xl">💼</div>
+                                    <div>
+                                        <h3 id="detail-name" class="font-bold text-xl text-midnight-navy">-</h3>
+                                        <p id="detail-items" class="text-xs text-on-surface-variant mt-0.5">Asset Tracker</p>
+                                    </div>
+                                </div>
+                                <span id="detail-amount" class="font-mono text-indigo-600 font-bold text-xl">$0</span>
+                            </div>
+                            <div class="space-y-2 mt-auto">
+                                <div class="flex justify-between text-xs text-on-surface-variant font-medium">
+                                    <span id="detail-spend">$0 Spend</span>
+                                    <span id="detail-remaining" class="text-midnight-navy font-bold">$0 Remaining</span>
+                                </div>
+                                <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <div id="detail-progress-bar" class="h-full bg-indigo-500" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-slate-100 rounded-xl p-8 shadow-sm space-y-4">
+                            <h3 class="text-sm font-bold text-midnight-navy uppercase tracking-wider">Add Expense</h3>
+                            <form id="add-expense-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-midnight-navy mb-1.5">Expense Name</label>
+                                    <input type="text" id="expense-name-input" placeholder="e.g. Bedroom Decor" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-midnight-navy focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-midnight-navy mb-1.5">Expense Amount</label>
+                                    <input type="number" min="1" id="expense-amount-input" placeholder="e.g. 1000" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-midnight-navy focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none" required>
+                                </div>
+                                <button type="submit" class="w-full bg-[#9395E6] hover:bg-[#8284D7] text-white font-semibold text-xs py-3.5 rounded-lg tracking-wider uppercase transition-all active:scale-[0.99] cursor-pointer">
+                                    Add New Expense
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- LATEST EXPENSES REAL LEDGER GRID COMPONENT LAYER -->
+                    <div class="bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
+                        <div class="p-6 border-b border-slate-50">
+                            <h3 class="font-bold text-sm text-midnight-navy uppercase tracking-wider">Latest Expenses</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead class="bg-slate-50 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest border-b border-slate-200/60">
+                                    <tr>
+                                        <th class="py-3.5 px-6">Name</th>
+                                        <th class="py-3.5 px-6">Amount</th>
+                                        <th class="py-3.5 px-6">Date</th>
+                                        <th class="py-3.5 px-6 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-midnight-navy">
+                                    <% if (user.expenses && user.expenses.length > 0) { %>
+                                        <% user.expenses.forEach(function(expense) { %>
+                                            <tr class="hover:bg-slate-50/50 transition-colors"
+                                                data-budget-parent="<%= (expense.budgetName && expense.budgetName !== 'undefined') ? expense.budgetName.trim() : '' %>">
+                                                <td class="py-3.5 px-6 font-semibold"><%= expense.name %></td>
+                                                <td class="py-3.5 px-6 font-mono font-medium text-[#D4AF37]">$<%= expense.amount.toLocaleString() %></td>
+                                                <td class="py-3.5 px-6 text-on-surface-variant"><%= expense.date %></td>
+                                                <td class="py-3.5 px-6 text-center">
+                                                    <button onclick="deleteExpenseEntry('<%= expense._id %>')" class="text-red-500 hover:text-red-700 transition-colors p-1 outline-none cursor-pointer">
+                                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="toast-notify" class="fixed bottom-16 right-12 bg-white border border-slate-100 shadow-xl rounded-lg px-6 py-4 flex items-center gap-2 transform translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-[200]">
+                    <span class="text-xs font-semibold text-midnight-navy">New Expense Added!</span>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- MODAL COMPONENT: CREATE NEW BUDGET INTERFACE MODULE       -->
+    <!-- ========================================================= -->
+    <div id="budget-creation-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-all duration-300">
+        <div class="w-full max-w-md bg-[#F8F7F4] rounded-xl shadow-2xl border border-slate-200/60 p-8 relative mx-4 transform scale-95 transition-transform duration-300" id="budget-modal-container">
+            
+            <button id="close-budget-modal-btn" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors outline-none cursor-pointer">
+                <span class="material-symbols-outlined text-xl">close</span>
+            </button>
+
+            <div class="border-b border-slate-200 pb-4 mb-6">
+                <h3 class="font-display text-xl font-bold text-slate-900">Initialize Asset Budget</h3>
+                <p class="text-xs text-slate-400 mt-1">Configure parameters for deployment tracking telemetry.</p>
+            </div>
+
+            <form id="create-budget-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-wider font-bold text-slate-500 mb-2">Category Identifier</label>
+                    <input type="text" id="modal-budget-name" name="name" placeholder="e.g., Marketing, Infrastructure, Travel" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm font-medium outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-all" required />
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider font-bold text-slate-500 mb-2">Allocated Funds (USD)</label>
+                    <input type="number" id="modal-budget-amount" name="amount" min="1" placeholder="3500" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm font-mono font-bold outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-all" required />
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider font-bold text-slate-500 mb-2">Visual Icon Emoji</label>
+                    <input type="text" id="modal-budget-icon" name="icon" placeholder="e.g., ✈️, 💻, 🍔, 🚗" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-all" maxlength="2" />
+                </div>
+
+                <button type="submit" class="w-full bg-[#D4AF37] hover:bg-[#C49F27] text-white font-bold text-xs uppercase tracking-widest py-4 rounded-lg shadow-md transition-all active:scale-[0.99] mt-2">
+                    Deploy Parameter Node
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL COMPONENT: EDIT BUDGET PARAMETERS INTERFACE MODULE   -->
+    <!-- ========================================================= -->
+    <div id="budget-edit-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-all duration-300">
+        <div class="w-full max-w-md bg-[#F8F7F4] rounded-xl shadow-2xl border border-slate-200/60 p-8 relative mx-4 transform scale-95 transition-transform duration-300" id="budget-edit-modal-container">
+            
+            <button onclick="closeEditBudgetModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors outline-none cursor-pointer">
+                <span class="material-symbols-outlined text-xl">close</span>
+            </button>
+
+            <div class="border-b border-slate-200 pb-4 mb-6">
+                <h3 class="font-display text-xl font-bold text-slate-900">Modify Asset Budget</h3>
+                <p class="text-xs text-slate-400 mt-1">Adjust target parameters for live deployment reallocation tracking.</p>
+            </div>
+
+            <form id="edit-budget-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-wider font-bold text-slate-500 mb-2">New Category Identifier</label>
+                    <input type="text" id="edit-modal-budget-name" placeholder="e.g., Infrastructure Renewals" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm font-medium outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-all" required />
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider font-bold text-slate-500 mb-2">Adjusted Funds Limit (USD)</label>
+                    <input type="number" id="edit-modal-budget-amount" min="1" placeholder="5000" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm font-mono font-bold outline-none focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-all" required />
+                </div>
+
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-widest py-4 rounded-lg shadow-md transition-all active:scale-[0.99] mt-2 cursor-pointer">
+                    Save Parameter Mutation
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Hover glowing style parameters triggers
+        document.querySelectorAll('.gold-wire-border').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                const bar = card.querySelector('.progress-glow');
+                if (bar) {
+                    bar.classList.add('brightness-90');
+                    bar.style.boxShadow = "0 0 15px rgba(212, 175, 55, 0.5)";
+                }
+            });
+            card.addEventListener('mouseleave', () => {
+                const bar = card.querySelector('.progress-glow');
+                if (bar) {
+                    bar.classList.remove('brightness-90');
+                    bar.style.boxShadow = "0 0 8px rgba(212, 175, 55, 0.3)";
+                }
+            });
+        });
+
+        // Combined Controller Infrastructure for the Popup Windows
+        const openModalBtn = document.getElementById('open-budget-modal-btn');
+        const closeModalBtn = document.getElementById('close-budget-modal-btn');
+        const budgetModal = document.getElementById('budget-creation-modal');
+        const modalContainer = document.getElementById('budget-modal-container');
+        const createBudgetForm = document.getElementById('create-budget-form');
+
+        if (openModalBtn && budgetModal) {
+            openModalBtn.addEventListener('click', () => {
+                budgetModal.classList.replace('hidden', 'flex');
+                setTimeout(() => modalContainer.classList.replace('scale-95', 'scale-100'), 20);
+            });
+        }
+
+        const closeBudgetModal = () => {
+            modalContainer.classList.replace('scale-100', 'scale-95');
+            setTimeout(() => budgetModal.classList.replace('flex', 'hidden'), 150);
+            createBudgetForm.reset();
+        };
+
+        if (closeModalBtn) closeModalBtn.addEventListener('click', closeBudgetModal);
+        budgetModal.addEventListener('click', (e) => { if (e.target === budgetModal) closeBudgetModal(); });
+
+        // Database communication channels array setup
+        if (createBudgetForm) {
+            createBudgetForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const payload = {
+                    name: document.getElementById('modal-budget-name').value.trim(),
+                    amount: Number(document.getElementById('modal-budget-amount').value),
+                    icon: document.getElementById('modal-budget-icon').value.trim()
+                };
+
+                try {
+                    const response = await fetch('/api/budgets/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        closeBudgetModal();
+                        window.location.reload(); 
+                    } else {
+                        alert(result.message || "Operation declined by database.");
+                    }
+                } catch (err) {
+                    alert("Loss of synchronization link with ledger engine.");
+                }
+            });
+        }
+
+        // View workflow switches with 1:1 strict parent matching algorithms
+        const listView = document.getElementById('budget-list-view');
+        const detailView = document.getElementById('budget-detail-view');
+        const backBtn = document.getElementById('back-to-list-btn');
+
+        document.querySelectorAll('.budget-item-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const name = card.getAttribute('data-name');
+                const amount = Number(card.getAttribute('data-amount'));
+                const spent = Number(card.getAttribute('data-spent'));
+                const icon = card.getAttribute('data-icon');
+                const percent = card.getAttribute('data-percent');
+                
+                document.getElementById('detail-name').innerText = name;
+                document.getElementById('detail-items').innerText = "Active Workspace Card";
+                document.getElementById('detail-amount').innerText = "$" + amount.toLocaleString();
+                document.getElementById('detail-spend').innerText = "$" + spent.toLocaleString() + " Spend";
+                document.getElementById('detail-remaining').innerText = "$" + (amount - spent).toLocaleString() + " Remaining";
+                document.getElementById('detail-icon').innerText = icon;
+                document.getElementById('detail-progress-bar').style.width = percent + "%";
+
+                // Filter the lower expense ledger rows dynamically
+                let visibleRowsCount = 0;
+                const tableBody = document.querySelector('#budget-detail-view tbody');
+                const rows = tableBody.querySelectorAll('tr:not(#fallback-empty-row)');
+
+                rows.forEach(row => {
+                    const rowBudgetName = row.getAttribute('data-budget-parent');
+                    
+                    const parentNameClean = (rowBudgetName && rowBudgetName !== "undefined") ? rowBudgetName.trim().toLowerCase() : "";
+                    const activeCategoryClean = name.trim().toLowerCase();
+
+                    // Only display the item if it explicitly matches the chosen category
+                    if (parentNameClean !== "" && parentNameClean === activeCategoryClean) {
+                        row.style.display = '';
+                        visibleRowsCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Display fallback message row if no transaction rows match this workspace target
+                let emptyFallbackRow = document.getElementById('fallback-empty-row');
+                if (!emptyFallbackRow) {
+                    emptyFallbackRow = document.createElement('tr');
+                    emptyFallbackRow.id = 'fallback-empty-row';
+                    emptyFallbackRow.innerHTML = `<td colspan="4" class="text-center py-8 text-slate-400 font-medium">No operational expense transactions found for this category.</td>`;
+                    tableBody.appendChild(emptyFallbackRow);
+                }
+
+                if (visibleRowsCount === 0) {
+                    emptyFallbackRow.style.display = '';
+                } else {
+                    emptyFallbackRow.style.display = 'none';
+                }
+
+                listView.classList.replace('block', 'hidden');
+                detailView.classList.replace('hidden', 'block');
+            });
+        });
+
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                detailView.classList.replace('block', 'hidden');
+                listView.classList.replace('hidden', 'block');
+            });
+        }
+
+        // Active Form Interceptor for the Expense Addition Channel Engine
+        const expenseForm = document.getElementById('add-expense-form');
+        if (expenseForm) {
+            expenseForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const targetedCategory = document.getElementById('detail-name').innerText;
+                
+                const payload = {
+                    name: document.getElementById('expense-name-input').value.trim(),
+                    amount: Number(document.getElementById('expense-amount-input').value),
+                    budgetName: targetedCategory
+                };
+
+                try {
+                    const response = await fetch('/api/expenses/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        const toast = document.getElementById('toast-notify');
+                        expenseForm.reset();
+                        toast.classList.remove('opacity-0', 'translate-y-10');
+                        toast.classList.add('opacity-100', 'translate-y-0');
+                        
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        alert(result.message || "Pipeline rejected transaction execution parameters.");
+                    }
+                } catch (err) {
+                    alert("Loss of synchronization loop status with core server.");
+                }
+            });
+        }
+
+        // Action Handler to delete individual items from the list dynamically
+        async function deleteExpenseEntry(expenseIdValue) {
+            if (!confirm("Permanently sign off and destroy this expense data record?")) return;
+            
+            try {
+                const response = await fetch(`/api/expenses/delete/${expenseIdValue}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    window.location.reload(); 
+                } else {
+                    alert("Mongoose controller pipeline refused the array mutation statement.");
+                }
+            } catch (err) {
+                alert("Loss of synchronization status link with database console.");
+            }
+        }
+
+        // Modal State Automation Channels for the Budget Editor Interface
+        const editModal = document.getElementById('budget-edit-modal');
+        const editModalContainer = document.getElementById('budget-edit-modal-container');
+        const editBudgetForm = document.getElementById('edit-budget-form');
+        let currentActiveBudgetKeyForEdit = "";
+
+        function openEditBudgetModal() {
+            const currentName = document.getElementById('detail-name').innerText;
+            const currentAmountRaw = document.getElementById('detail-amount').innerText.replace(/[^0-9.]/g, '');
+            
+            currentActiveBudgetKeyForEdit = currentName;
+            document.getElementById('edit-modal-budget-name').value = currentName;
+            document.getElementById('edit-modal-budget-amount').value = Math.round(Number(currentAmountRaw));
+
+            editModal.classList.replace('hidden', 'flex');
+            setTimeout(() => editModalContainer.classList.replace('scale-95', 'scale-100'), 20);
+        }
+
+        function closeEditBudgetModal() {
+            editModalContainer.classList.replace('scale-100', 'scale-95');
+            setTimeout(() => editModal.classList.replace('flex', 'hidden'), 150);
+            editBudgetForm.reset();
+        }
+
+        // Form Submit Handler for the Budget Update Action
+        if (editBudgetForm) {
+            editBudgetForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const payload = {
+                    oldName: currentActiveBudgetKeyForEdit,
+                    newName: document.getElementById('edit-modal-budget-name').value.trim(),
+                    newAmount: Number(document.getElementById('edit-modal-budget-amount').value)
+                };
+
+                try {
+                    const response = await fetch('/api/budgets/edit', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        closeEditBudgetModal();
+                        window.location.reload();
+                    } else {
+                        alert(result.message || "Operation declined by server controller engine.");
+                    }
+                } catch (err) {
+                    alert("Loss of transmission link context with memory arrays.");
+                }
+            });
+        }
+
+        // Action Trigger to Request Confirmation and Purge chosen Category Node Elements
+        async function triggerBudgetDeletion() {
+            const targetedBudgetName = document.getElementById('detail-name').innerText;
+            
+            const confirmed = confirm(`CRITICAL WARNING: Are you sure you want to delete the "${targetedBudgetName}" budget category?\n\nThis will permanently purge this budget tracking container and all associated expense rows beneath it.`);
+            if (!confirmed) return;
+
+            try {
+                const response = await fetch('/api/budgets/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ budgetName: targetedBudgetName })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    window.location.reload();
+                } else {
+                    alert(result.message || "Database engine deployment loop rejected deletion sequence.");
+                }
+            } catch (err) {
+                alert("Loss of communication loop synchronization status.");
+            }
+        }
+
+        // Safely animate loop elements on DOM injection load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.dynamic-card-progress').forEach(progress => {
+                const targetWidth = progress.getAttribute('data-width') || 0;
+                setTimeout(() => {
+                    progress.style.width = `${targetWidth}%`;
+                }, 150);
+            });
+        });
+</script>
+</body>
+</html>
