@@ -190,7 +190,8 @@ app.post('/auth/login', async (req, res) => {
             return res.status(401).json({ success: false, message: 'Identity unmatched.' });
         }
 
-        const isValid = await bcrypt.compare(password, user.password);
+        // 🔥 FIXED FOR VERCEL: Use compareSync to bypass async thread evaluation crashes in serverless layers
+        const isValid = bcrypt.compareSync(password, user.password);
         if (!isValid) {
             return res.status(401).json({ success: false, message: 'Invalid credentials.' });
         }
