@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoStore = require('connect-mongo'); // 🔥 Added this right here inside the file
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const ejs = require('ejs');
@@ -37,6 +38,7 @@ const UserSchema = new mongoose.Schema({
     ]
 });
 
+// This prevents Mongoose from trying to re-compile the model on every serverless function wake-up
 const User = mongoose.models.User || mongoose.model('User', UserSchema);
 
 // Middleware Config Matrix
@@ -50,7 +52,16 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'aureum_secure_vault_key',
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+    store: MongoStore.create({
+        mongoUrl: cloudMongoURI, // Links sessions to your MongoDB Atlas
+        ttl: 24 * 60 * 60,       // Sessions expire after 1 day
+        autoRemove: 'native'
+    }),
+    cookie: { 
+        maxAge: 24 * 60 * 60 * 1000, 
+        secure: true,                
+        sameSite: 'none'             
+    }
 }));
 
 // MAP EJS TO RENDER .HTML FILES DIRECTLY WITH FIXED ABSOLUTE PATH RESOLUTIONS
