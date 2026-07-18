@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
-const MongoStore = require('connect-mongo'); // 🔥 Added this right here inside the file
+const MongoStore = require('connect-mongo'); 
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const ejs = require('ejs');
@@ -48,12 +48,16 @@ app.use(express.json());
 // Serve static assets out of path mapping variables
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
+// 🔥 CRITICAL FIX FOR VERCEL SERVERLESS DEPLOYMENTS:
+// Tells Express to trust the Vercel HTTPS reverse proxy layers, allowing cookies to securely register.
+app.set('trust proxy', 1);
+
 app.use(session({
     secret: process.env.SESSION_SECRET || 'aureum_secure_vault_key',
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-        mongoUrl: cloudMongoURI, // Links sessions to your MongoDB Atlas
+        mongoUrl: cloudMongoURI, 
         ttl: 24 * 60 * 60,       // Sessions expire after 1 day
         autoRemove: 'native'
     }),
@@ -67,7 +71,7 @@ app.use(session({
 // MAP EJS TO RENDER .HTML FILES DIRECTLY WITH FIXED ABSOLUTE PATH RESOLUTIONS
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
-app.set('views', path.join(__dirname)); // 🔥 FIXED: Absolute directory resolution path context mapping
+app.set('views', path.join(__dirname)); 
 
 // Authentication Route Guard (Targeting auth.html gateway)
 const requireAuth = (req, res, next) => {
@@ -105,7 +109,6 @@ app.get('/api/budgets', async (req, res) => {
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found." });
         }
-        // Send back the budgets array seamlessly
         res.json({ success: true, budgets: user.budgets || [] });
     } catch (error) {
         console.error("Fetch budgets system failure:", error);
@@ -146,7 +149,7 @@ app.get('/profile', requireAuth, (req, res) => res.redirect('/profile.html'));
 
 /* ================= AUTH ROUTES (JSON API COMPATIBLE) ================= */
 
-// Handle Sign Up (Clean Slate Workspace Patch)
+// Handle Sign Up
 app.post('/auth/signup', async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -162,7 +165,8 @@ app.post('/auth/signup', async (req, res) => {
             return res.status(400).json({ success: false, message: 'This email is already registered.' });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 12);
+        // 🔥 USE SYNC HASHING FOR STABILITY UNDER SERVERLESS CONTEXT TIMEOUT LIMITS
+        const hashedPassword = bcrypt.hashSync(password, 12);
         
         const defaultBudgets = [];
         const defaultExpenses = [];
@@ -207,7 +211,6 @@ app.post('/auth/login', async (req, res) => {
             return res.status(401).json({ success: false, message: 'Identity unmatched.' });
         }
 
-        // 🔥 FIXED FOR VERCEL: Use compareSync to bypass async thread evaluation crashes in serverless layers
         const isValid = bcrypt.compareSync(password, user.password);
         if (!isValid) {
             return res.status(401).json({ success: false, message: 'Invalid credentials.' });
@@ -247,16 +250,13 @@ app.post('/api/budgets/edit', requireAuth, async (req, res) => {
         const user = await User.findById(req.session.userId);
         if (!user) return res.status(404).json({ success: false, message: "Identity node not found." });
 
-        // Find the specific budget to update metrics
         const targetBudget = user.budgets.find(b => b.name.toLowerCase() === oldName.trim().toLowerCase());
         if (!targetBudget) return res.status(404).json({ success: false, message: "Target budget category not found." });
 
-        // Update budget details
         targetBudget.name = newName.trim();
         targetBudget.amount = Number(newAmount);
         targetBudget.percent = Math.min(Math.round((targetBudget.spent / targetBudget.amount) * 100), 100);
 
-        // Cascade update: change the budgetName on all associated expenses too!
         user.expenses.forEach(exp => {
             if (exp.budgetName && exp.budgetName.toLowerCase() === oldName.trim().toLowerCase()) {
                 exp.budgetName = newName.trim();
@@ -283,10 +283,7 @@ app.post('/api/budgets/delete', requireAuth, async (req, res) => {
         const user = await User.findById(req.session.userId);
         if (!user) return res.status(404).json({ success: false, message: "Identity node not found." });
 
-        // Remove the target budget category card element
         user.budgets = user.budgets.filter(b => b.name.toLowerCase() !== budgetName.trim().toLowerCase());
-
-        // Clean up: pull out any expenses linked to this deleted budget space
         user.expenses = user.expenses.filter(exp => !exp.budgetName || exp.budgetName.toLowerCase() !== budgetName.trim().toLowerCase());
 
         await user.save();
@@ -375,18 +372,15 @@ app.post('/api/expenses/delete/:id', requireAuth, async (req, res) => {
         const user = await User.findById(req.session.userId);
         if (!user) return res.status(404).json({ success: false, message: "Identity node not found." });
 
-        // Pinpoint the target expense item to fetch its original value parameters before deletion
         const targetExpense = user.expenses.id(expenseId);
         if (targetExpense && targetExpense.budgetName) {
             const targetBudget = user.budgets.find(b => b.name.toLowerCase() === targetExpense.budgetName.toLowerCase());
             if (targetBudget) {
-                // Deduct from budget spent and fix limits safely
                 targetBudget.spent = Math.max(0, (targetBudget.spent || 0) - targetExpense.amount);
                 targetBudget.percent = targetBudget.amount > 0 ? Math.min(Math.round((targetBudget.spent / targetBudget.amount) * 100), 100) : 0;
             }
         }
 
-        // Mutation delete step executing Mongoose sub-document helper channels
         user.expenses.pull({ _id: expenseId });
         await user.save();
 
@@ -413,7 +407,6 @@ app.get('/:page', async (req, res, next) => {
     const filename = req.params.page;
     
     try {
-        // 1. Guard-protected pages that absolutely REQUIRE a live session
         if (filename === 'dashboard.html' || filename === 'budget.html' || filename === 'profile.html' || filename === 'expense.html') {
             if (!req.session || !req.session.userId) {
                 return res.redirect('/auth.html');
@@ -424,7 +417,6 @@ app.get('/:page', async (req, res, next) => {
             return res.render(path.join(__dirname, filename), { user }); 
         }
         
-        // 2. FIXED FOR VERCEL: Render public files absolute paths
         if (filename.endsWith('.html')) {
             return res.render(path.join(__dirname, filename), { user: null });
         }
