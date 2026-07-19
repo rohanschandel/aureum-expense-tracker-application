@@ -130,6 +130,215 @@
             backdrop-filter: blur(8px);
             background: rgba(255, 255, 255, 0.8);
         }
+
+        /* Natively Hide the Mobile Core Elements on Standard Desktop Screens */
+.mobile-only-flex,
+#mobile-hamburger-trigger,
+#mobile-nav-overlay {
+    display: none !important;
+}
+
+/* Instantiate Mobile Viewport Constraints Matrix (Triggered under 1024px) */
+@media screen and (max-width: 1024px) {
+    
+    /* Completely hide the desktop left sidebar layout panel */
+    aside, 
+    .desktop-sidebar, 
+    div[class*="sidebar-left"],
+    .w-64 { 
+        display: none !important; 
+    }
+    
+    /* Re-calibrate main layout grid tracking back to a fluid 100% column */
+    main, 
+    .main-content, 
+    div[class*="content-wrapper"],
+    .md\:ml-64 {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 1rem !important;
+    }
+
+    /* Un-hide the mobile functional trigger button */
+    #mobile-hamburger-trigger.mobile-only-flex {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 60px;
+        height: 60px;
+        background: #111111; 
+        color: #D4AF37;      
+        border: 2px solid #D4AF37;
+        border-radius: 50%;
+        box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+        z-index: 9999;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        /* Enforce Continuous User Attention-Grabbing Pulse Matrix */
+        animation: goldAttentionPulse 2s infinite ease-in-out;
+    }
+
+    /* Active Glowing Pulse Animation Pipeline while off */
+    @keyframes goldAttentionPulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
+            background: #111111;
+        }
+        50% {
+            box-shadow: 0 0 0 15px rgba(212, 175, 55, 0);
+            background: #332800; /* Lighten up visually while off to draw user interaction */
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+            background: #111111;
+        }
+    }
+
+    /* Slide-Out Canvas Panel Architecture Overlay Rules */
+    #mobile-nav-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 10000;
+        transition: opacity 0.3s ease;
+    }
+
+    .mobile-nav-overlay-hidden {
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+    
+    .mobile-nav-overlay-active {
+        display: block !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+
+    .mobile-nav-panel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 80%;
+        max-width: 320px;
+        height: 100%;
+        background: #ffffff;
+        box-shadow: 4px 0 25px rgba(0,0,0,0.15);
+        display: flex;
+        flex-direction: column;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-nav-overlay-active .mobile-nav-panel {
+        transform: translateX(0);
+    }
+
+    .mobile-panel-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .mobile-panel-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        color: #111111;
+    }
+
+    #mobile-hamburger-close {
+        background: transparent;
+        border: none;
+        color: #666666;
+        cursor: pointer;
+    }
+
+    .mobile-panel-links {
+        padding: 1.5rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex-grow: 1;
+    }
+
+    .mobile-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.85rem 1rem;
+        color: #444444;
+        font-family: 'Manrope', sans-serif;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .mobile-nav-link:active {
+        background: rgba(212, 175, 55, 0.08);
+        color: #B59410;
+    }
+
+    .highlight-gold-action {
+        background: #111111 !important;
+        color: #D4AF37 !important;
+        margin-top: auto;
+        border: 1px solid #D4AF37;
+        justify-content: center;
+    }
+
+    .mobile-panel-footer {
+        padding: 1.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        background: #fcfcfc;
+    }
+
+    .user-profile-badge {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .avatar-letter-container {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #D4AF37;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+    }
+
+    .profile-details-stack {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .profile-display-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #111111;
+    }
+
+    .profile-display-tier {
+        font-size: 0.8rem;
+        color: #888888;
+    }
+}
     </style>
 </head>
 <body class="font-body-md text-on-surface overflow-hidden">
@@ -157,6 +366,56 @@
         </a>
 
     </nav>
+    <!-- ==========================================================================
+     MOBILE HAMBURGER NAVIGATION CORE (ONLY ACTIVE ON MOBILE VIEWPORTS)
+     ========================================================================== -->
+<!-- Floating Pulse Trigger Button -->
+<button id="mobile-hamburger-trigger" class="mobile-only-flex" aria-label="Toggle Navigation Menu">
+  <span class="material-symbols-outlined">menu</span>
+</button>
+
+<!-- Mobile Slide-Out Panel System Overlay -->
+<div id="mobile-nav-overlay" class="mobile-nav-overlay-hidden">
+  <div class="mobile-nav-panel">
+    <!-- Panel Header Controls -->
+    <div class="mobile-panel-header">
+      <span class="mobile-panel-title">AUREUM NAVIGATOR</span>
+      <button id="mobile-hamburger-close" aria-label="Close Navigation Menu">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Active Navigation Routing Array -->
+    <nav class="mobile-panel-links">
+      <a href="/dashboard.html" class="mobile-nav-link">
+        <span class="material-symbols-outlined">dashboard</span> Dashboard
+      </a>
+      <a href="/budget.html" class="mobile-nav-link">
+        <span class="material-symbols-outlined">account_balance_wallet</span> Budgets
+      </a>
+      <a href="/expense.html" class="mobile-nav-link">
+        <span class="material-symbols-outlined">payments</span> Expenses
+      </a>
+      <a href="/profile.html" class="mobile-nav-link">
+        <span class="material-symbols-outlined">person</span> Profile
+      </a>
+      <a href="#upgrade-tier" class="mobile-nav-link highlight-gold-action">
+        <span class="material-symbols-outlined">workspace_premium</span> Upgrade Tier
+      </a>
+    </nav>
+    
+    <!-- Operational Identity Matrix (User Avatar & Name) -->
+    <div class="mobile-panel-footer">
+      <div class="user-profile-badge">
+        <span class="avatar-letter-container">C</span>
+        <div class="profile-details-stack">
+          <span class="profile-display-name">chhaya bai</span>
+          <span class="profile-display-tier">Sovereign Member</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
     <!-- Main Dashboard Layout Framework -->
     <div class="flex h-[calc(100vh-73px)] w-full max-w-[1440px] mx-auto">
         <!-- Sidebar Navigation -->
@@ -420,106 +679,143 @@
 
     <!-- Dedicated Interactive JavaScript Controller Engines -->
     <script>
-        async function deleteExpenseEntry(expenseIdString) {
-            if (!confirm("Confirm removal of this data ledger configuration entry permanently?")) return;
+    // 1. Core Data Ledger Operational Functions
+    async function deleteExpenseEntry(expenseIdString) {
+        if (!confirm("Confirm removal of this data ledger configuration entry permanently?")) return;
+        
+        try {
+            const response = await fetch(`/api/expenses/delete/${expenseIdString}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
             
-            try {
-                const response = await fetch(`/api/expenses/delete/${expenseIdString}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    window.location.reload(); 
-                } else {
-                    alert("Database context arrays refused structural execution commands.");
-                }
-            } catch (err) {
-                alert("Loss of authorization network link connection with app host.");
+            const result = await response.json();
+            if (result.success) {
+                window.location.reload(); 
+            } else {
+                alert("Database context arrays refused structural execution commands.");
             }
+        } catch (err) {
+            alert("Loss of authorization network link connection with app host.");
         }
+    }
 
-        const liveElements = document.querySelectorAll('.pulse-gold');
-        setInterval(() => {
-            liveElements.forEach(el => {
-                el.style.opacity = Math.random() * 0.4 + 0.6;
-            });
-        }, 1000);
-
-        const upgradeTrigger = document.getElementById('dashboard-upgrade-link');
-        const upgradeModal = document.getElementById('upgrade-modal');
-        const upgradeContainer = document.getElementById('upgrade-modal-container');
-        const closeUpgradeBtn = document.getElementById('close-upgrade-btn');
-
-        if (upgradeTrigger) {
-            upgradeTrigger.addEventListener('click', (e) => {
-                e.preventDefault();
-                upgradeModal.classList.replace('hidden', 'flex');
-                setTimeout(() => upgradeContainer.classList.replace('scale-95', 'scale-100'), 20);
-            });
-        }
-
-        const closeUpgrade = () => {
-            upgradeContainer.classList.replace('scale-100', 'scale-95');
-            setTimeout(() => upgradeModal.classList.replace('flex', 'hidden'), 150);
-        };
-
-        if (closeUpgradeBtn) closeUpgradeBtn.addEventListener('click', closeUpgrade);
-        upgradeModal.addEventListener('click', (e) => { if (e.target === upgradeModal) closeUpgrade(); });
-
-        const licenseBtn = document.getElementById('execute-licensing-btn');
-        if (licenseBtn) {
-            licenseBtn.addEventListener('click', () => {
-                const pLoader = document.getElementById('processing-loader');
-                const lBox = document.getElementById('loader-box');
-                const pIcon = document.getElementById('proc-icon');
-                const pTitle = document.getElementById('proc-title');
-                const pDesc = document.getElementById('proc-desc');
-
-                pLoader.classList.replace('hidden', 'flex');
-                setTimeout(() => lBox.classList.replace('scale-95', 'scale-100'), 20);
-
-                setTimeout(() => {
-                    pIcon.classList.remove('animate-spin');
-                    pIcon.innerText = 'verified';
-                    pIcon.parentElement.className = 'w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4';
-                    pTitle.innerText = 'Sovereign Status Confirmed';
-                    pTitle.className = 'text-lg font-bold text-emerald-700 mb-2';
-                    pDesc.innerText = 'Regal Elite signature validation compiled cleanly. Your institutional assets pipeline workspace is now operational.';
-
-                    setTimeout(() => {
-                        lBox.classList.replace('scale-100', 'scale-95');
-                        setTimeout(() => {
-                            pLoader.classList.replace('flex', 'hidden');
-                            closeUpgrade();
-                            pIcon.classList.add('animate-spin');
-                            pIcon.innerText = 'sync';
-                            pIcon.parentElement.className = 'w-14 h-14 rounded-full bg-amber-50 text-primary flex items-center justify-center mx-auto mb-4';
-                            pTitle.className = 'text-lg font-bold text-midnight-navy mb-2';
-                            pTitle.innerText = 'Deploying Licensing Request';
-                            pDesc.innerText = 'Verifying cross-border private ledger channel authorization metrics. Please remain steady.';
-                        }, 150);
-                    }, 3000);
-                }, 2500);
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.dynamic-bar').forEach(bar => {
-                const targetHeight = bar.getAttribute('data-height') || 0;
-                setTimeout(() => {
-                    bar.style.height = `${targetHeight}%`;
-                }, 100);
-            });
-
-            document.querySelectorAll('.dynamic-progress').forEach(progress => {
-                const targetWidth = progress.getAttribute('data-width') || 0;
-                setTimeout(() => {
-                    progress.style.width = `${targetWidth}%`;
-                }, 100);
-            });
+    // 2. Ambient Visual Interface Animations
+    const liveElements = document.querySelectorAll('.pulse-gold');
+    setInterval(() => {
+        liveElements.forEach(el => {
+            el.style.opacity = Math.random() * 0.4 + 0.6;
         });
-    </script>
+    }, 1000);
+
+    // 3. Premium Upgrade Modal Pipeline Flow
+    const upgradeTrigger = document.getElementById('dashboard-upgrade-link');
+    const upgradeModal = document.getElementById('upgrade-modal');
+    const upgradeContainer = document.getElementById('upgrade-modal-container');
+    const closeUpgradeBtn = document.getElementById('close-upgrade-btn');
+
+    if (upgradeTrigger) {
+        upgradeTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            upgradeModal.classList.replace('hidden', 'flex');
+            setTimeout(() => upgradeContainer.classList.replace('scale-95', 'scale-100'), 20);
+        });
+    }
+
+    const closeUpgrade = () => {
+        upgradeContainer.classList.replace('scale-100', 'scale-95');
+        setTimeout(() => upgradeModal.classList.replace('flex', 'hidden'), 150);
+    };
+
+    if (closeUpgradeBtn) closeUpgradeBtn.addEventListener('click', closeUpgrade);
+    if (upgradeModal) {
+        upgradeModal.addEventListener('click', (e) => { 
+            if (e.target === upgradeModal) closeUpgrade(); 
+        });
+    }
+
+    // 4. Licensing Request State Machine Processing
+    const licenseBtn = document.getElementById('execute-licensing-btn');
+    if (licenseBtn) {
+        licenseBtn.addEventListener('click', () => {
+            const pLoader = document.getElementById('processing-loader');
+            const lBox = document.getElementById('loader-box');
+            const pIcon = document.getElementById('proc-icon');
+            const pTitle = document.getElementById('proc-title');
+            const pDesc = document.getElementById('proc-desc');
+
+            pLoader.classList.replace('hidden', 'flex');
+            setTimeout(() => lBox.classList.replace('scale-95', 'scale-100'), 20);
+
+            setTimeout(() => {
+                pIcon.classList.remove('animate-spin');
+                pIcon.innerText = 'verified';
+                pIcon.parentElement.className = 'w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4';
+                pTitle.innerText = 'Sovereign Status Confirmed';
+                pTitle.className = 'text-lg font-bold text-emerald-700 mb-2';
+                pDesc.innerText = 'Regal Elite signature validation compiled cleanly. Your institutional assets pipeline workspace is now operational.';
+
+                setTimeout(() => {
+                    lBox.classList.replace('scale-100', 'scale-95');
+                    setTimeout(() => {
+                        pLoader.classList.replace('flex', 'hidden');
+                        closeUpgrade();
+                        pIcon.classList.add('animate-spin');
+                        pIcon.innerText = 'sync';
+                        pIcon.parentElement.className = 'w-14 h-14 rounded-full bg-amber-50 text-primary flex items-center justify-center mx-auto mb-4';
+                        pTitle.className = 'text-lg font-bold text-midnight-navy mb-2';
+                        pTitle.innerText = 'Deploying Licensing Request';
+                        pDesc.innerText = 'Verifying cross-border private ledger channel authorization metrics. Please remain steady.';
+                    }, 150);
+                }, 3000);
+            }, 2500);
+        });
+    }
+
+    // 5. Native DOM Rendering & Interaction Triggers
+    document.addEventListener('DOMContentLoaded', () => {
+        // Dynamic Layout Component Sizing Calculations
+        document.querySelectorAll('.dynamic-bar').forEach(bar => {
+            const targetHeight = bar.getAttribute('data-height') || 0;
+            setTimeout(() => {
+                bar.style.height = `${targetHeight}%`;
+            }, 100);
+        });
+
+        document.querySelectorAll('.dynamic-progress').forEach(progress => {
+            const targetWidth = progress.getAttribute('data-width') || 0;
+            setTimeout(() => {
+                progress.style.width = `${targetWidth}%`;
+            }, 100);
+        });
+
+        // Interactive Mobile Hamburger Toggle Execution
+        const triggerBtn = document.getElementById('mobile-hamburger-trigger');
+        const closeBtn = document.getElementById('mobile-hamburger-close');
+        const overlayPanel = document.getElementById('mobile-nav-overlay');
+
+        if (triggerBtn && closeBtn && overlayPanel) {
+            // Open mobile canvas menu layer
+            triggerBtn.addEventListener('click', () => {
+                overlayPanel.classList.remove('mobile-nav-overlay-hidden');
+                overlayPanel.classList.add('mobile-nav-overlay-active');
+            });
+
+            // Close mobile canvas menu layer
+            closeBtn.addEventListener('click', () => {
+                overlayPanel.classList.remove('mobile-nav-overlay-active');
+                overlayPanel.classList.add('mobile-nav-overlay-hidden');
+            });
+
+            // Safeguard backdrop dismissal click rule
+            overlayPanel.addEventListener('click', (e) => {
+                if (e.target === overlayPanel) {
+                    overlayPanel.classList.remove('mobile-nav-overlay-active');
+                    overlayPanel.classList.add('mobile-nav-overlay-hidden');
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>
