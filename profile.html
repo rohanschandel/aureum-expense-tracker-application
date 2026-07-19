@@ -2,7 +2,7 @@
 <html class="dark" lang="en">
 <head>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aureum | User Profile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -28,6 +28,33 @@
             padding-right: 2rem;
             appearance: none;
         }
+        /* ==========================================================================
+   PROFILE DASHBOARD MOBILE OVERRIDE (DESKTOP UNTOUCHED)
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    /* Stack layout columns vertically */
+    .profile-card, 
+    .account-parameters-container,
+    div[class*="flex"], 
+    div[class*="grid"] {
+        flex-direction: column !important;
+        grid-template-columns: 100% !important;
+        width: 100% !important;
+    }
+
+    /* Fix text truncation/overflow visible in the screenshot */
+    div, p, span, h3 {
+        word-break: break-all !important; 
+        white-space: normal !important;
+    }
+
+    /* Expand input boxes and buttons to full width */
+    .parameter-row, .btn, button {
+        width: 100% !important;
+        display: block !important;
+        margin-bottom: 0.75rem !important;
+    }
+}
     </style>
 </head>
 <body class="text-slate-200 overflow-x-hidden">

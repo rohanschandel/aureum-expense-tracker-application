@@ -23,4 +23,34 @@
     transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
+}   
+
+/* ==========================================================================
+   AUTH PORTAL MOBILE MATRIX (DESKTOP LAYOUT 100% UNTOUCHED)
+   ========================================================================== */
+@media screen and (max-width: 640px) {
+    body {
+        padding: 1rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 100vh !important;
+    }
+
+    /* Force the main login card to take full fluid width instead of squishing */
+    .auth-container, 
+    div[class*="max-w"], 
+    .bg-white {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        padding: 1.5rem !important;
+        border-radius: 12px !important;
+    }
+
+    /* Scale titles so they don't wrap weirdly */
+    h2, .text-3xl {
+        font-size: 1.75rem !important;
+        line-height: 2.25rem !important;
+    }
 }
