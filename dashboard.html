@@ -131,218 +131,236 @@
             background: rgba(255, 255, 255, 0.8);
         }
 
-        /* Natively Hide the Mobile Core Elements on Standard Desktop Screens */
-.mobile-only-flex,
+        /* --- 1. Isolation Rules (Hidden completely on Desktop viewports) --- */
 #mobile-hamburger-trigger,
 #mobile-nav-overlay {
     display: none !important;
 }
 
-/* Instantiate Mobile Viewport Constraints Matrix (Triggered under 1024px) */
+/* --- 2. Mobile Viewport Processing Media Query (Under 1024px) --- */
 @media screen and (max-width: 1024px) {
     
-    /* Completely hide the desktop left sidebar layout panel */
-    aside, 
-    .desktop-sidebar, 
-    div[class*="sidebar-left"],
-    .w-64 { 
+    /* Safely drop out wide desktop navigation sidebars */
+    aside, .desktop-sidebar, .w-64 { 
         display: none !important; 
     }
-    
-    /* Re-calibrate main layout grid tracking back to a fluid 100% column */
-    main, 
-    .main-content, 
-    div[class*="content-wrapper"],
-    .md\:ml-64 {
+    main, .main-content, .md\:ml-64 {
         margin-left: 0 !important;
         width: 100% !important;
-        max-width: 100% !important;
-        padding: 1rem !important;
+        padding-top: 60px !important; /* Make room for top bar trigger */
     }
 
-    /* Un-hide the mobile functional trigger button */
-    #mobile-hamburger-trigger.mobile-only-flex {
+    /* Floating Hamburger Trigger Button with Continuous Light Glow */
+    #mobile-hamburger-trigger {
         display: flex !important;
         align-items: center;
         justify-content: center;
         position: fixed;
-        bottom: 24px;
-        right: 24px;
-        width: 60px;
-        height: 60px;
-        background: #111111; 
-        color: #D4AF37;      
-        border: 2px solid #D4AF37;
-        border-radius: 50%;
-        box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
-        z-index: 9999;
+        top: 15px;
+        left: 15px;
+        width: 45px;
+        height: 45px;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        color: #111111;
+        z-index: 999;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        
-        /* Enforce Continuous User Attention-Grabbing Pulse Matrix */
-        animation: goldAttentionPulse 2s infinite ease-in-out;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        animation: activeAttentionPulse 2s infinite ease-in-out;
     }
 
-    /* Active Glowing Pulse Animation Pipeline while off */
-    @keyframes goldAttentionPulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
-            background: #111111;
-        }
-        50% {
-            box-shadow: 0 0 0 15px rgba(212, 175, 55, 0);
-            background: #332800; /* Lighten up visually while off to draw user interaction */
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
-            background: #111111;
-        }
+    /* Attention-grabbing glow pulse loop while menu is shut */
+    @keyframes activeAttentionPulse {
+        0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); border-color: rgba(212, 175, 55, 0.4); }
+        50% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); border-color: rgba(212, 175, 55, 0.8); }
+        100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); border-color: rgba(212, 175, 55, 0.4); }
     }
 
-    /* Slide-Out Canvas Panel Architecture Overlay Rules */
+    /* Dark background backdrop opacity veil overlay */
     #mobile-nav-overlay {
+        display: block !important;
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(4px);
+        background: rgba(0, 0, 0, 0.4);
         z-index: 10000;
         transition: opacity 0.3s ease;
     }
 
-    .mobile-nav-overlay-hidden {
+    .drawer-overlay-hidden {
         opacity: 0 !important;
         pointer-events: none !important;
     }
     
-    .mobile-nav-overlay-active {
-        display: block !important;
+    .drawer-overlay-active {
         opacity: 1 !important;
         pointer-events: auto !important;
     }
 
-    .mobile-nav-panel {
+    /* Navigation side drawer chassis (Slides from left margin) */
+    .drawer-side-panel {
         position: absolute;
         top: 0;
         left: 0;
         width: 80%;
-        max-width: 320px;
+        max-width: 290px;
         height: 100%;
         background: #ffffff;
-        box-shadow: 4px 0 25px rgba(0,0,0,0.15);
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
         display: flex;
         flex-direction: column;
         transform: translateX(-100%);
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .mobile-nav-overlay-active .mobile-nav-panel {
+    .drawer-overlay-active .drawer-side-panel {
         transform: translateX(0);
     }
 
-    .mobile-panel-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .mobile-panel-title {
-        font-family: 'Playfair Display', serif;
-        font-weight: 700;
-        font-size: 1.1rem;
-        letter-spacing: 1px;
-        color: #111111;
-    }
-
-    #mobile-hamburger-close {
-        background: transparent;
-        border: none;
-        color: #666666;
-        cursor: pointer;
-    }
-
-    .mobile-panel-links {
-        padding: 1.5rem 1rem;
+    /* Top profile details display header banner block */
+    .drawer-profile-banner {
+        background: #111b27; /* Dark elegant foundation layout */
+        padding: 2rem 1.5rem 1.5rem 1.5rem;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
-        flex-grow: 1;
+        gap: 12px;
     }
 
-    .mobile-nav-link {
+    .avatar-letter-circle {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 0.85rem 1rem;
-        color: #444444;
-        font-family: 'Manrope', sans-serif;
-        font-weight: 500;
-        text-decoration: none;
-        border-radius: 8px;
-        transition: all 0.2s ease;
-    }
-
-    .mobile-nav-link:active {
-        background: rgba(212, 175, 55, 0.08);
-        color: #B59410;
-    }
-
-    .highlight-gold-action {
-        background: #111111 !important;
-        color: #D4AF37 !important;
-        margin-top: auto;
-        border: 1px solid #D4AF37;
         justify-content: center;
-    }
-
-    .mobile-panel-footer {
-        padding: 1.5rem;
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
-        background: #fcfcfc;
-    }
-
-    .user-profile-badge {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .avatar-letter-container {
-        width: 40px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
         background: #D4AF37;
         color: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         font-weight: 700;
+        font-size: 1.25rem;
     }
 
-    .profile-details-stack {
+    .profile-info-block {
         display: flex;
         flex-direction: column;
     }
 
-    .profile-display-name {
-        font-size: 0.95rem;
+    .user-profile-name {
+        color: #ffffff;
         font-weight: 600;
-        color: #111111;
+        font-size: 1.05rem;
+        font-family: 'Manrope', sans-serif;
     }
 
-    .profile-display-tier {
+    .user-profile-tier {
+        color: rgba(255, 255, 255, 0.6);
         font-size: 0.8rem;
-        color: #888888;
+    }
+
+    /* Links spacing array list layer */
+    .drawer-nav-links {
+        padding: 0.75rem 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .drawer-link {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 1rem 1.5rem;
+        color: #333333;
+        font-family: 'Manrope', sans-serif;
+        font-weight: 500;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: background 0.2s ease;
+    }
+
+    .drawer-link .material-symbols-outlined {
+        color: #555555;
+    }
+
+    .drawer-link:active {
+        background: rgba(0, 0, 0, 0.04);
+    }
+
+    /* Highlight matching current status items view tracking */
+    .active-link {
+        background: #f4f6f8;
+        color: #111111;
+        font-weight: 600;
+    }
+    
+    .active-link .material-symbols-outlined {
+        color: #D4AF37;
+    }
+
+    .upgrade-gold-link {
+        margin-top: auto;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        color: #B59410;
+    }
+    .upgrade-gold-link .material-symbols-outlined {
+        color: #D4AF37;
     }
 }
     </style>
 </head>
 <body class="font-body-md text-on-surface overflow-hidden">
 
+    <!-- ==========================================================================
+     MOBILE NAVIGATION DRAWER (SLIDES IN FROM LEFT)
+     ========================================================================== -->
+<!-- The Glowing Hamburger Trigger Icon (Top Left Corner of the screen) -->
+<button id="mobile-hamburger-trigger" class="mobile-hamburger-icon-btn" aria-label="Open Navigation">
+  <span class="material-symbols-outlined">menu</span>
+</button>
+
+<!-- Transparent Dark Backdrop Veil -->
+<div id="mobile-nav-overlay" class="drawer-overlay-hidden">
+  
+  <!-- The Drawer Panel (Matches the screenshot layout) -->
+  <div class="drawer-side-panel">
+    
+    <!-- Top Account Header Profile Banner Area -->
+    <div class="drawer-profile-banner">
+      <div class="avatar-wrapper">
+        <span class="avatar-letter-circle">C</span>
+      </div>
+      <div class="profile-info-block">
+        <span class="user-profile-name">chhaya bai</span>
+        <span class="user-profile-tier">Sovereign Tier</span>
+      </div>
+    </div>
+
+    <!-- Scrollable Navigation Links List Matrix -->
+    <nav class="drawer-nav-links">
+      <a href="/dashboard.html" class="drawer-link active-link">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="/budget.html" class="drawer-link">
+        <span class="material-symbols-outlined">account_balance_wallet</span>
+        <span>Budgets</span>
+      </a>
+      <a href="/expense.html" class="drawer-link">
+        <span class="material-symbols-outlined">payments</span>
+        <span>Expenses</span>
+      </a>
+      <a href="/profile.html" class="drawer-link">
+        <span class="material-symbols-outlined">person</span>
+        <span>Profile</span>
+      </a>
+      <a href="#upgrade-tier" id="drawer-upgrade-btn" class="drawer-link upgrade-gold-link">
+        <span class="material-symbols-outlined">workspace_premium</span>
+        <span>Upgrade Tier</span>
+      </a>
+    </nav>
+  </div>
+</div>
     <!-- TopNavBar -->
     <nav class="relative bg-white border-b border-outline-variant flex justify-between items-center w-full px-margin-desktop py-4 max-w-[1440px] mx-auto z-50 min-h-[70px]">
         
@@ -366,56 +384,7 @@
         </a>
 
     </nav>
-    <!-- ==========================================================================
-     MOBILE HAMBURGER NAVIGATION CORE (ONLY ACTIVE ON MOBILE VIEWPORTS)
-     ========================================================================== -->
-<!-- Floating Pulse Trigger Button -->
-<button id="mobile-hamburger-trigger" class="mobile-only-flex" aria-label="Toggle Navigation Menu">
-  <span class="material-symbols-outlined">menu</span>
-</button>
-
-<!-- Mobile Slide-Out Panel System Overlay -->
-<div id="mobile-nav-overlay" class="mobile-nav-overlay-hidden">
-  <div class="mobile-nav-panel">
-    <!-- Panel Header Controls -->
-    <div class="mobile-panel-header">
-      <span class="mobile-panel-title">AUREUM NAVIGATOR</span>
-      <button id="mobile-hamburger-close" aria-label="Close Navigation Menu">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-    </div>
-
-    <!-- Active Navigation Routing Array -->
-    <nav class="mobile-panel-links">
-      <a href="/dashboard.html" class="mobile-nav-link">
-        <span class="material-symbols-outlined">dashboard</span> Dashboard
-      </a>
-      <a href="/budget.html" class="mobile-nav-link">
-        <span class="material-symbols-outlined">account_balance_wallet</span> Budgets
-      </a>
-      <a href="/expense.html" class="mobile-nav-link">
-        <span class="material-symbols-outlined">payments</span> Expenses
-      </a>
-      <a href="/profile.html" class="mobile-nav-link">
-        <span class="material-symbols-outlined">person</span> Profile
-      </a>
-      <a href="#upgrade-tier" class="mobile-nav-link highlight-gold-action">
-        <span class="material-symbols-outlined">workspace_premium</span> Upgrade Tier
-      </a>
-    </nav>
     
-    <!-- Operational Identity Matrix (User Avatar & Name) -->
-    <div class="mobile-panel-footer">
-      <div class="user-profile-badge">
-        <span class="avatar-letter-container">C</span>
-        <div class="profile-details-stack">
-          <span class="profile-display-name">chhaya bai</span>
-          <span class="profile-display-tier">Sovereign Member</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
     <!-- Main Dashboard Layout Framework -->
     <div class="flex h-[calc(100vh-73px)] w-full max-w-[1440px] mx-auto">
         <!-- Sidebar Navigation -->
@@ -678,8 +647,8 @@
     </footer>
 
     <!-- Dedicated Interactive JavaScript Controller Engines -->
-    <script>
-    // 1. Core Data Ledger Operational Functions
+   <script>
+    // 1. Data Ledger Operational Functions
     async function deleteExpenseEntry(expenseIdString) {
         if (!confirm("Confirm removal of this data ledger configuration entry permanently?")) return;
         
@@ -774,7 +743,7 @@
 
     // 5. Native DOM Rendering & Interaction Triggers
     document.addEventListener('DOMContentLoaded', () => {
-        // Dynamic Layout Component Sizing Calculations
+        // Dynamic UI Layout Component Sizing Calculations
         document.querySelectorAll('.dynamic-bar').forEach(bar => {
             const targetHeight = bar.getAttribute('data-height') || 0;
             setTimeout(() => {
@@ -789,31 +758,33 @@
             }, 100);
         });
 
-        // Interactive Mobile Hamburger Toggle Execution
+        // Native Sidebar Drawer Slide-In Logic Engine
         const triggerBtn = document.getElementById('mobile-hamburger-trigger');
-        const closeBtn = document.getElementById('mobile-hamburger-close');
         const overlayPanel = document.getElementById('mobile-nav-overlay');
+        const drawerUpgradeBtn = document.getElementById('drawer-upgrade-btn');
 
-        if (triggerBtn && closeBtn && overlayPanel) {
-            // Open mobile canvas menu layer
+        if (triggerBtn && overlayPanel) {
+            // Slide sidebar navigation drawer in cleanly from the left
             triggerBtn.addEventListener('click', () => {
-                overlayPanel.classList.remove('mobile-nav-overlay-hidden');
-                overlayPanel.classList.add('mobile-nav-overlay-active');
+                overlayPanel.classList.remove('drawer-overlay-hidden');
+                overlayPanel.classList.add('drawer-overlay-active');
             });
 
-            // Close mobile canvas menu layer
-            closeBtn.addEventListener('click', () => {
-                overlayPanel.classList.remove('mobile-nav-overlay-active');
-                overlayPanel.classList.add('mobile-nav-overlay-hidden');
-            });
-
-            // Safeguard backdrop dismissal click rule
+            // Retract drawer when clicking on the transparent background veil zone
             overlayPanel.addEventListener('click', (e) => {
                 if (e.target === overlayPanel) {
-                    overlayPanel.classList.remove('mobile-nav-overlay-active');
-                    overlayPanel.classList.add('mobile-nav-overlay-hidden');
+                    overlayPanel.classList.remove('drawer-overlay-active');
+                    overlayPanel.classList.add('drawer-overlay-hidden');
                 }
             });
+
+            // Automatically close mobile side navigation panel if user clicks upgrade inside it
+            if (drawerUpgradeBtn) {
+                drawerUpgradeBtn.addEventListener('click', () => {
+                    overlayPanel.classList.remove('drawer-overlay-active');
+                    overlayPanel.classList.add('drawer-overlay-hidden');
+                });
+            }
         }
     });
 </script>
