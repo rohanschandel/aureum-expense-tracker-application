@@ -326,15 +326,17 @@
   <div class="drawer-side-panel">
     
     <!-- Top Account Header Profile Banner Area -->
-    <div class="drawer-profile-banner">
-      <div class="avatar-wrapper">
-        <span class="avatar-letter-circle">C</span>
-      </div>
-      <div class="profile-info-block">
-        <span class="user-profile-name">chhaya bai</span>
-        <span class="user-profile-tier">Sovereign Tier</span>
-      </div>
-    </div>
+<div class="drawer-profile-banner">
+  <div class="avatar-wrapper">
+    <!-- Dynamically grabs the user's avatar letter directly from your backend session -->
+    <span class="avatar-letter-circle"><%= user.avatarLetter %></span>
+  </div>
+  <div class="profile-info-block">
+    <!-- Dynamically renders Rohan Singh Chandel (or whoever is signed in) -->
+    <span class="user-profile-name"><%= user.name %></span>
+    
+  </div>
+</div>
 
     <!-- Scrollable Navigation Links List Matrix -->
     <nav class="drawer-nav-links">
